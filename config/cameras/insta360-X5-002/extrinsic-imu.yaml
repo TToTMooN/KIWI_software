@@ -1,0 +1,20 @@
+# Cam <-> IMU extrinsic for insta360-X5-002 (front lens), from Kalibr
+# kalibr_calibrate_imu_camera, run 2026-06-05
+# (source recording VID_20260605_134737_00_002.insv, front lens).
+#
+# cam0.T_cam_imu: p_cam = T_cam_imu @ p_imu (R_ItoC | p_IinC). Valid for both the
+# raw fisheye and the DS->pinhole rectified frame (identity-rotation rectifier,
+# see kiwi/core/rectify.py::Rectifier.build_double_sphere). DS intrinsics = ds_front.
+cam0:
+  T_cam_imu:
+  - [-0.00600707631340853, 0.00161724073884167, -0.999980649596059, -0.0129173614067804]
+  - [0.00707491774311144, -0.999973595069477, -0.00165972972294685, 0.00873055687178799]
+  - [-0.999956929359006, -0.00708475096370064, 0.00599547585177767, -0.00911459509213889]
+  - [0, 0, 0, 1]
+  timeshift_cam_imu: -0.005034894970821666
+  camera_model: ds
+  distortion_model: none
+  distortion_coeffs: []
+  intrinsics: [-0.00410364120686826, 0.580273976376114, 513.603943185458, 513.493893924664, 958.618438370694, 959.940510147264]
+  resolution: [1920, 1920]
+  rostopic: /lens0/image_raw

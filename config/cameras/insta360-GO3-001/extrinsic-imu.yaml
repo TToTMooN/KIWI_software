@@ -1,0 +1,30 @@
+# Cam <-> IMU extrinsic for insta360-GO3-001 (single lens), from Kalibr
+# kalibr_calibrate_imu_camera, run 2026-09-12
+# (solved from the square-mode Pro Video recording
+# PRO_VID_20260909_204609_00_058_ego_video.mp4, 994 Hz gyro).
+#
+# cam0.T_cam_imu: p_cam = T_cam_imu @ p_imu, i.e. R_ItoC | p_IinC (rotation from
+# IMU to camera and position of the IMU in the camera frame).
+#
+# Solved against the 2688x2688 square-mode intrinsics profile
+# (intrinsics-2688x2688.npz); the embedded camchain below is that
+# mode's. T_cam_imu and the timeshift are physical camera<->IMU constants and
+# hold across GO3 video modes - the per-mode part of the registry is the
+# intrinsics mapping in camera.yaml, not this file.
+# Single-lens unit: `kiwi calib imu check` (front/back composition) does not
+# apply; accepted on report residuals.
+#
+# Plain YAML (PyYAML-parseable), consumed via cam0.T_cam_imu / timeshift_cam_imu.
+cam0:
+  T_cam_imu:
+  - [0.999935792426826, -0.0012548747580812202, 0.011262162895137531, -0.0028087158436536043]
+  - [-0.0013460886131943352, -0.9999663271660288, 0.008095219547812678, 0.0029471006032655545]
+  - [0.011251625179524534, -0.008109859642644289, -0.9999038109275289, -0.009674085344322339]
+  - [0.0, 0.0, 0.0, 1.0]
+  camera_model: pinhole
+  distortion_coeffs: [-0.06835809526614954, 0.031301565871206756, -0.03861190515786954, 0.010164771447322571]
+  distortion_model: equidistant
+  intrinsics: [1324.645100752204, 1325.4169056647404, 1356.1920055107737, 1355.030917048286]
+  resolution: [2688, 2688]
+  rostopic: /cam0/image_raw
+  timeshift_cam_imu: -0.005577842659061324

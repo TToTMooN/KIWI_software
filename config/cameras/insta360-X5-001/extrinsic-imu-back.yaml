@@ -1,0 +1,21 @@
+# Cam <-> IMU extrinsic for insta360-X5-001 REAR lens (lens1), from Kalibr
+# kalibr_calibrate_imu_camera, run 2026-06-03
+# (source recording VID_20260603_154807_00_051.insv, rear lens).
+#
+# cam0.T_cam_imu here is the REAR lens T_cam_imu: p_cam = T_cam_imu @ p_imu
+# (R_ItoC | p_IinC). rostopic /lens1/image_raw, DS intrinsics = ds_back.
+#
+# The key is cam0 by Kalibr's single-camera output convention; it is the rear lens.
+cam0:
+  T_cam_imu:
+  - [-0.014547183230115663, -0.021046546984931427, 0.9996726575835118, 0.014517891926768023]
+  - [-0.03774336215118882, -0.9990543642305623, -0.021582769178030523, 0.008324838840837597]
+  - [0.9991815741263419, -0.03804497564566195, 0.013739059448424412, -0.020217484780973877]
+  - [0.0, 0.0, 0.0, 1.0]
+  camera_model: ds
+  distortion_coeffs: []
+  distortion_model: none
+  intrinsics: [-0.0064544730692838, 0.577561427412679, 509.6121677611061, 509.60950553529784, 955.3472020081974, 965.3337827291515]
+  resolution: [1920, 1920]
+  rostopic: /lens1/image_raw
+  timeshift_cam_imu: -0.004990438883159372

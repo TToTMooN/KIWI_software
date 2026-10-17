@@ -1,0 +1,18 @@
+# imu_noise_v1 - Kalibr noise parameters for insta360-X5-001's embedded IMU.
+#
+# RAW densities (no inflation). Consumers apply their own multiplier
+# (e.g. scene fusion's imu_noise_scale) - the multiplier is estimator
+# policy, never part of the measurement.
+#
+# Allan-variance measured on a 2-hr stationary on-camera .insv log
+# (2026-07-05) recorded while the camera encodes video.
+schema: imu_noise_v1
+unit: insta360-X5-001
+source: stationary on-camera Allan log (see notes)
+measured_at: '2026-07-05'
+fs_hz: 1000.0
+noise:
+  accelerometer_noise_density: 0.000390705
+  accelerometer_random_walk: 3.68435e-05
+  gyroscope_noise_density: 6.71571e-05
+  gyroscope_random_walk: 8.23459e-06

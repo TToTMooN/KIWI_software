@@ -1,0 +1,13 @@
+{
+    "configuration": "List_db6tsleZByNSQv=ServoActuation;TopTaper=true",
+    "documentId": "eecabbca2b473235ed55f5da",
+    "documentMicroversion": "7a7e1d42d408677173274659",
+    "elementId": "ec87053891b043af359fb804",
+    "fullConfiguration": "List_db6tsleZByNSQv=ServoActuation;TopTaper=true",
+    "id": "M9bxV2pz5j3UrZyvY",
+    "isStandardContent": false,
+    "name": "Left Finger SA Spur Gear 24 teeth 1% <1>",
+    "partId": "ReLD",
+    "suppressed": false,
+    "type": "Part"
+}

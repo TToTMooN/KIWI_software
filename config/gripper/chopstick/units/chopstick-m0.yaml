@@ -1,0 +1,30 @@
+schema: chopstick_unit_v1
+description: >-
+  Chopstick gripper, chopstick design, physical build m0 with ArUco marker ID 0.
+tool: chopstick
+
+build:
+  # This build's physical ArUco tag: ID 0, black-square edge 14 mm.
+  marker:
+    id: 0
+    size: 0.014
+  # Fixed camera<->marker pose
+  fixed_pose:
+    rvec:
+    - 1.8290016340499122
+    - -0.032318295721456475
+    - -0.01677120561165797
+    tvec:
+    - -0.00014205080973838974
+    - 0.04021909100990825
+    - 0.030323637907744318
+    fov_deg: 160.0
+    out_size:
+    - 1920
+    - 1920
+    lens: front
+
+# Per-unit overrides over the tool's session: defaults. Omit to inherit.
+# session:
+#   angle_closed_deg: 17.0
+#   angle_open_deg: 107.0

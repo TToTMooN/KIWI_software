@@ -1,0 +1,13 @@
+schema: scene_mapping_profile
+name: default
+# Scene init copies this recipe into <scene>/profiles/ and pins its digest.
+# The scene-local copy governs subsequent builds.
+selection:
+  # Minimum duration of each mapping stream; profiles may raise the 60 s floor.
+  min_usable_duration_s: 60.0
+engine:
+  # Paired recipe: ~30 fps with 960 px frames. Intrinsics are rescaled, and
+  # retained frames keep container times.
+  map_fps: 30.0
+  # Localization uses the same image size and keeps every recorded frame.
+  map_image_size: 960

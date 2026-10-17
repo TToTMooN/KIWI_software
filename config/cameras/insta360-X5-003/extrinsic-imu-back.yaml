@@ -1,0 +1,26 @@
+# Cam <-> IMU extrinsic for insta360-X5-003 REAR lens (lens1), from Kalibr
+# kalibr_calibrate_imu_camera, run 2026-08-03
+# (source recording VID_20260803_151919_00_024.insv, rear lens).
+#
+# cam0.T_cam_imu here is the REAR lens T_cam_imu: p_cam = T_cam_imu @ p_imu
+# (R_ItoC | p_IinC). rostopic /lens1/image_raw, DS intrinsics = ds_back from
+# intrinsics.npz (calibrated from this same recording).
+#
+# The recording is 119.88 fps, so the bag was built with --frame-stride 20
+# (~6 fps) over --bag-from-to 1 72, the window in which the board is visible
+# to the rear lens.
+#
+# The key is cam0 by Kalibr's single-camera output convention; it is the rear lens.
+cam0:
+  T_cam_imu:
+  - [-1.0824468868792157e-05, -0.005262920567162942, 0.9999861506790653, 0.014040914554794354]
+  - [-0.02221610376276809, -0.9997393447998001, -0.005261862110289518, 0.00882129843800405]
+  - [0.9997531918510849, -0.02221585304167977, -0.00010609994200060944, -0.020076006448454264]
+  - [0.0, 0.0, 0.0, 1.0]
+  camera_model: ds
+  distortion_coeffs: []
+  distortion_model: none
+  intrinsics: [-0.0017283350721820606, 0.582442584713521, 516.284173007292, 516.376114272812, 958.7490547479908, 961.0232749893562]
+  resolution: [1920, 1920]
+  rostopic: /lens1/image_raw
+  timeshift_cam_imu: -0.004796275458745272

@@ -1,0 +1,25 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# pixi
+.pixi/
+
+# docs build
+site/
+
+# recorded data lives outside git (the sample take is on Google Drive; see the README)
+data/
+
+# local tool state
+.claude/
+.vscode/
+.idea/
+
+# uv (pixi owns the lockfile - pixi.lock)
+uv.lock

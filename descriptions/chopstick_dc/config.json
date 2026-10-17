@@ -1,0 +1,15 @@
+{
+    // Onshape URL of the assembly
+    "url": "https://cad.onshape.com/documents/eecabbca2b473235ed55f5da/w/12b51beda5c251ebfa3a2944/e/eee5f146c2d7ebba77b85c9a",
+    // Output format
+    "output_format": "urdf",
+    // Output filename
+    "output_filename": "ChopstickDC",
+    // Robot name
+    "robot_name" : "ChopstickDC",
+
+    // Post import commands
+    "post_import_commands" : [
+        "echo 'Import done'"
+    ]
+}

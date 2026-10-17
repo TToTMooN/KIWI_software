@@ -1,0 +1,227 @@
+[workspace]
+name = "kiwi"
+channels = ["conda-forge"]  # bare conda-forge (no mirrors)
+requires-pixi = ">=0.82"
+# glibc 2.31: rerun-sdk ships manylinux_2_31 wheels only (pixi assumes 2.28).
+platforms = [{ platform = "linux-64", glibc = "2.31" }, "osx-arm64"]
+
+[dependencies]
+python = "3.11.*"
+numpy = "*"
+pyyaml = "*"
+scipy = "*"
+pip = "*"
+# Binary dep of camera.convert (subprocess demux).
+ffmpeg = "*"
+
+[pypi-dependencies]
+kiwi = { path = ".", editable = true }
+tyro = "*"
+pytest = "*"
+# Same wheel the CI test job resolves (self-contained; core never opens GUI windows).
+opencv-python-headless = ">=4.7,<5"
+pyarrow = ">=24.0.0, <25"
+zarr = ">=2.16, <3"
+telemetry-parser = ">=0.3.0, <0.4"
+
+[tasks]
+test = "pytest"
+# The native LeRobot writer against the stock reader: write a fixture here,
+# load it in the isolated lerobot env (`pixi run -e lerobot loadback`).
+loadback-fixture = "python tests/export/loadback/write_fixture.py build/loadback"
+# Pre-populate the model cache: model weights are release assets, not repo content.
+fetch-models = "kiwi models fetch"
+
+[feature.tune.pypi-dependencies]
+# The interactive gripper tuner (kiwi eef tune) + trace pngs.
+viser = "*"
+matplotlib = "*"
+
+[feature.viz.pypi-dependencies]
+# The rerun episode player (kiwi viz play) + the trace png. Both imported
+# lazily.
+rerun-sdk = ">=0.36.3,<0.37"
+matplotlib = "*"
+
+[feature.gui.pypi-dependencies]
+nicegui = ">=3.8,<4"
+
+[feature.replay.pypi-dependencies]
+# The robot-description loader (kiwi.core.descriptions) + URDF render
+# pipeline over descriptions/. Both imported lazily; the render-matches
+# test needs them installed.
+yourdfpy = "*"
+xacro = "*"
+# `kiwi replay view` - the description viewer. Pinned <1.1: see the
+# pyproject note - 1.1.0's batched label renderer drops label colour.
+viser = ">=1.0.27,<1.1"
+# The dual-arm batch IK solver (`kiwi replay solve`) - validated against
+# mujoco 3.8 + mink 1.1 + daqp; bump only with a re-validation.
+mujoco = ">=3.8,<3.9"
+mink = ">=1.1,<1.2"
+qpsolvers = ">=4,<5"
+daqp = "*"
+# The vendored mjviser bridge (kiwi.replay.mjviser): MuJoCo geoms -> batched
+# viser meshes for the replay viewer.
+trimesh = "*"
+pillow = "*"
+
+[feature.dev.pypi-dependencies]
+ruff = "==0.15.16"
+pre-commit = "*"
+
+[feature.dev.tasks]
+# Both halves of what CI runs.
+lint = "ruff check . && ruff format --check ."
+fmt = "ruff format ."
+
+[feature.docs.pypi-dependencies]
+mkdocs-material = "*"
+
+# --------------------------------------------------------------------------
+# Optional `lerobot` feature: an ISOLATED, CPU-only environment for the
+# load-back validation of the datasets kiwi.export writes ("a stock lerobot
+# loads it"). lerobot pulls a heavy tree (torch, datasets, av, ...) kept out
+# of every other env; CI loads an export with it only in the separate
+# `loadback` job (a plain venv with CPU torch), never in the main test job.
+# The export path itself NEVER imports lerobot - it writes the format from
+# first principles with pyarrow + ffmpeg. `no-default-feature` so the tree
+# cannot conflict with the repo's cv2 pin. >=0.4 is the v3.0-format era,
+# matching the native writer.
+#     pixi install -e lerobot
+#     pixi run loadback-fixture && pixi run -e lerobot loadback
+# torch/torchvision come from the CPU wheel index - no CUDA.
+# --------------------------------------------------------------------------
+[feature.lerobot.dependencies]
+python = "3.11.*"
+ffmpeg = "7.*"
+
+[feature.lerobot.pypi-dependencies]
+lerobot = ">=0.4,<0.5"
+torch = { version = ">=2.2.1", index = "https://download.pytorch.org/whl/cpu" }
+torchvision = { version = ">=0.21.0", index = "https://download.pytorch.org/whl/cpu" }
+
+[feature.lerobot.tasks]
+loadback = "python tests/export/loadback/load_fixture.py build/loadback"
+
+[feature.docs.tasks]
+docs-serve = "mkdocs serve"
+docs-build = "mkdocs build --strict"
+
+[environments]
+state = { features = ["state"] }
+mask = { features = ["cpu-mask"] }
+mask-gpu = { features = ["gpu-mask"] }
+default = { solve-group = "main" }
+dev = { features = ["dev"], solve-group = "main" }
+tune = { features = ["tune"], solve-group = "main" }
+viz = { features = ["viz"], solve-group = "main" }
+gui = { features = ["gui", "viz"], solve-group = "main" }
+replay = { features = ["replay"], solve-group = "main" }
+docs = { features = ["docs"], solve-group = "main" }
+# Linux-only (the feature restricts its own platforms): the ORB-SLAM3
+# engine build chain. Own solve group so its C++ libopencv=4.* pin never
+# constrains the main group.
+slam-offline = { features = ["slam-offline"] }
+# Own solve group + no default feature: torch must never leak into the
+# main group; this env only ever loads datasets back.
+lerobot = { features = ["lerobot"], no-default-feature = true }
+# Own solve group: torch (CUDA wheels) must never leak into the main group.
+ground = { features = ["ground"] }
+
+# --------------------------------------------------------------------------
+# Optional `slam-offline` feature (Linux only): the build chain for
+# ORB-SLAM3, the scene-mapping engine (`third_party/ORB_SLAM3` submodule at
+# the pinned upstream commit + the auditable patch series under
+# `third_party/patches/orbslam3/`). Self-contained: toolchain and every C++
+# dependency come from this env - no system packages, no sudo.
+#     git submodule update --init third_party/ORB_SLAM3
+#     pixi install -e slam-offline
+#     pixi run -e slam-offline build-orbslam3
+# The build stages a patched copy under build/orbslam3/ and never modifies
+# the submodule; artifacts and boundary are documented in
+# third_party/patches/orbslam3/README.md and third_party/NOTICE. The built
+# engine is GPL-3.0 and only ever runs as a separate process. CI never
+# builds it.
+# --------------------------------------------------------------------------
+# Optional `state` feature: GTSAM for the global visual-inertial batch
+# estimator (kiwi.state). Everything else runs without it - the component
+# imports the solver lazily.
+[feature.state.dependencies]
+gtsam = "*"
+
+# cpu-mask: CPU ONNX Runtime for kiwi.perception.gripper_segmentation (the
+# gripper-unet artifact, fetched into the model cache). A FEATURE (not a
+# default dep) so the gpu env can swap in onnxruntime-gpu without two
+# distributions owning the same module. The pipeline runs the model on CUDA
+# (`kiwi scene build` in mask-gpu); this env only serves the CPU segmentation
+# tests in tests/perception/ on a machine without a GPU.
+[feature.cpu-mask]
+platforms = ["linux-64-glibc-2-31"]
+
+[feature.cpu-mask.pypi-dependencies]
+onnxruntime = ">=1.29.0, <2"
+
+# gpu-mask: CUDA ONNX Runtime for learned masks. The manylinux
+# onnxruntime-gpu / NVIDIA wheels carry no RPATH and would bind the SYSTEM
+# libstdc++ into the process, breaking the conda cv2 stack (CXXABI
+# mismatch) - front-load the env's own lib dir.
+[feature.gpu-mask]
+platforms = ["linux-64-glibc-2-31"]
+
+[feature.gpu-mask.activation.env]
+LD_LIBRARY_PATH = "$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
+
+[feature.gpu-mask.pypi-dependencies]
+onnxruntime-gpu = ">=1.29.0, <2"
+nvidia-cudnn-cu13 = "==9.26.0.39.dev64544457"
+nvidia-cublas = "==13.7.0.10rc1"
+nvidia-cuda-runtime = "==13.4.46rc1"
+nvidia-cufft = "==12.4.0.16rc1"
+nvidia-curand = "==10.4.4.46rc1"
+
+# --------------------------------------------------------------------------
+# Optional `ground` feature: the floor-height stage (kiwi.ground) - torch for
+# the GPU plane sweep and view rendering. Own
+# solve group so torch never leaks into the main group; the CUDA wheels come
+# from the cu130 index (RTX 50-series / sm_120 needs a CUDA 13 build). The
+# NVIDIA wheels carry no RPATH and would bind the SYSTEM libstdc++ - front-load
+# the env's own lib dir, as gpu-mask does. Runs on CPU without a GPU, slowly.
+#     pixi install -e ground
+#     pixi run -e ground -- kiwi run --episode <ep> --profile global-state-ground
+# --------------------------------------------------------------------------
+[feature.ground]
+platforms = ["linux-64-glibc-2-31"]
+
+[feature.ground.activation.env]
+LD_LIBRARY_PATH = "$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
+
+[feature.ground.pypi-dependencies]
+torch = { version = ">=2.9", index = "https://download.pytorch.org/whl/cu130" }
+
+[feature.slam-offline]
+platforms = ["linux-64-glibc-2-31"]
+
+[feature.slam-offline.dependencies]
+cxx-compiler = "*"
+c-compiler = "*"
+cmake = "*"
+make = "*"
+ninja = "*"
+pkg-config = "*"
+git = "*"
+# ORB-SLAM3 V1.0 and its bundled g2o/Sophus request Eigen3 3.x; the
+# conda-forge default is now Eigen 5, whose CMake config refuses that
+# request (same-major compatibility), so pin the 3.4 series.
+eigen = "3.4.*"
+# ORB-SLAM3 V1.0 targets OpenCV 3/4; conda-forge defaults to OpenCV 5, which
+# breaks the build - pin the C++ lib to 4.x for the validated engine build.
+libopencv = "4.*"
+# Pangolin v0.6 wants GLEW + X11; ORB-SLAM3 links OpenSSL and Boost.
+glew = "*"
+libboost-devel = "*"
+openssl = "*"
+xorg-libx11 = "*"
+
+[feature.slam-offline.tasks]
+build-orbslam3 = "bash third_party/build_orbslam3.sh"

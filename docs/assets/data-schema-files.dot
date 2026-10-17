@@ -1,0 +1,23 @@
+digraph data_schema_files {
+  graph [rankdir=TB, bgcolor="#ffffff", pad=0.35, nodesep=0.45, ranksep=0.35,
+    fontname="DejaVu Sans", fontsize=18, labelloc=t,
+    label="Outputs: scene, episode, exported dataset"];
+  node [shape=box, style="rounded,filled", fillcolor="#f7faf4", color="#607d50",
+    fontname="DejaVu Sans Mono", fontsize=12, margin="0.18,0.14"];
+  edge [color="#60736a", arrowsize=0.7, fontname="DejaVu Sans", fontsize=11];
+
+  scene [label="SCENE ROOT\lscene.yaml\lscene_map/\l  current.json\l  scene_frame.json\l  maps/<id>/\l    atlas.osa \l    settings.yaml\l    timestamps.txt\l    observations.txt\l    engine.log\l  reloc/\l    <episode>-<arm>-<lens>.txt\l    .settings.yaml / .engine.log\l  masks/<episode>-<arm>-front/\l  cache/\l    <raw-digest-prefix>-imu.csv / .json\l\lThree roles:\l  front_left, front_right, shared_rear\l"];
+
+  episode [label="EPISODE ROOT\lepisode.yaml / sync.inputs.json\lconfig/                                copied before processing\l  cameras/                             registry + calibration\l  gripper/                             designs + physical builds\l  ...                                  remaining deployment config\lrun_status.json / pipeline_run_status.json\lraw/\l  original .insv / .mp4 recordings\l<arm>/\l  lens0.mp4 / lens1.mp4\l  convert.inputs.json\l  eef.npz / eef.inputs.json\l  scene/\l    <role>_observations.txt\l    <role>_observations.inputs.json\l    <role>.engine.log*      \l    state.tum / state.inputs.json\l    state_latent.npz\l    <raw-digest-prefix>-imu.csv / .json\lhead/                                  optional\l  head_marker.tum / head_marker_report.json\l  head_marker_diagnostics.npz\lground/                                optional\l  ground_report.json\l  ground_observations.npz\l", fillcolor="#f2f6fa", color="#60758b"];
+
+  dataset [label="EXPORTED DATASET ROOT\ldata/                                  existing tables\lvideos/                                existing videos\lmeta/\l  info.json / stats.json\l  existing task + episode metadata\l  export_provenance.json \l  source_records/\l    <digest>/<original-name>.json\l    <digest>/<original-name>.yaml or .yml\l  quality/\l    000000/                            export index\l      <source-episode-relative-path>\l      (used TUM/TXT/NPZ/CSV/log files)\l      export_samples.npz\l    shared/\l      <digest>/<original-name>\l\lRaw recordings, atlas/model binaries:\l  references only; no archive copy\l\lAll archived_path entries are relative\lto this dataset root, including meta/.\l", fillcolor="#fff8e9", color="#b08937"];
+
+  {rank=same; scene; episode; dataset;}
+  scene -> episode [label="atlas + frozen placement", constraint=false];
+  episode -> dataset [label="actual inputs + records + quality", constraint=false];
+  note [shape=plaintext, fillcolor="white", fontname="DejaVu Sans", fontsize=11,
+    label="* Builder localization logs stay in scene_map/reloc/; records link to them.\nIMU caches retain their recorded clock offsets, units and producer identity.\nOptional plots/overlays and temporary decoded-image caches are omitted."];
+  scene -> note [style=invis];
+  episode -> note [style=invis];
+  dataset -> note [style=invis];
+}

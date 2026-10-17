@@ -1,0 +1,96 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+# Import root is `kiwi`. If this is ever published to PyPI, give the
+# distribution a distinct name there; nothing in-repo depends on this one.
+name = "kiwi"
+description = "KIWI - Kinematic Interface for the Wild: bimanual + egocentric robot data collection with off-the-shelf cameras"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dynamic = ["version"]
+dependencies = [
+    "numpy",
+    # >=4.7: cv2.aruco lives in the main modules from there on. <5: the whole
+    # recipe (aruco border sampling, fisheye rectify) is validated on 4.x -
+    # OpenCV 5 changed detectMarkers array shapes; bump only with revalidation.
+    "opencv-python-headless>=4.7,<5",
+    "pyyaml",
+    "scipy",
+    # Parquet writer for the LeRobot exports. Pinned to the layout the
+    # writers are validated against.
+    "pyarrow>=24.0.0,<25",
+    # The UMI-style replay-buffer side export. <3: zarr 3 changed the store
+    # API and the Diffusion-Policy toolchain consumes 2.x stores.
+    "zarr>=2.16,<3",
+    # .insv telemetry probe (camera.registry); imported lazily there, so the
+    # package stays importable without it.
+    "telemetry-parser>=0.3.0,<0.4",
+    "tyro",
+]
+
+[project.urls]
+Repository = "https://github.com/TToTMooN/KIWI_software"
+
+[project.scripts]
+kiwi = "kiwi.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff==0.15.16", "pre-commit"]
+# The interactive gripper tuner (kiwi eef tune) + the trace pngs. Optional so
+# `import kiwi.*` and CI stay viser-free; kiwi.viz.gripper_tune imports it
+# lazily and fails with the install hint.
+tune = ["viser", "matplotlib"]
+# The robot-description loader (kiwi.core.descriptions) + the URDF render
+# pipeline. yourdfpy parses the descriptions/ URDFs (imported lazily, same
+# pattern as tune); xacro (pure-Python on PyPI) re-renders them from the
+# xacro chain and backs the render-matches-snapshot test. CI installs this
+# extra so the description tests execute rather than skip.
+# viser <1.1: 1.1.0's batched label renderer never applies the per-label
+# colour its own client sets, so a frame label renders white on viser's
+# (always white) label pill - unreadable, and not reachable from the API
+# since LabelProps has no colour field. 1.0.x keeps the text black; 1.0.27
+# is the version this viewer is validated against.
+# mujoco/mink/qpsolvers/daqp: the dual-arm batch IK solver (kiwi replay
+# solve), validated against mujoco 3.8 + mink 1.1 with daqp as the QP
+# backend - bump only with a re-validation of the solver's reference runs.
+# trimesh/pillow: the vendored mjviser bridge (kiwi.replay.mjviser) - MuJoCo
+# geoms -> batched viser meshes for the replay viewer.
+replay = [
+    "yourdfpy",
+    "xacro",
+    "viser>=1.0.27,<1.1",
+    "mujoco>=3.8,<3.9",
+    "mink>=1.1,<1.2",
+    "qpsolvers>=4,<5",
+    "daqp",
+    "trimesh",
+    "pillow",
+]
+# The rerun episode player (kiwi viz play) + the tool-state trace png.
+# Optional so `import kiwi.*` stays rerun-free; kiwi.viz.player imports
+# it lazily and fails with the install hint. Pinned to the 0.36 API the
+# player targets, including native Gaussian PLY loading and blueprints.
+viz = ["rerun-sdk>=0.36.3,<0.37", "matplotlib"]
+# The local data workspace, including the embedded Rerun viewer.
+gui = ["nicegui>=3.8,<4", "rerun-sdk>=0.36.3,<0.37", "matplotlib"]
+# Native rendering runs in its own 3DGRUT backend environment (third_party/setup_real2sim.sh).
+real2sim = ["pillow", "viser>=1.0.27,<1.2"]
+
+[tool.hatch.version]
+path = "kiwi/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kiwi"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+# The vendored Kalibr submodule is upstream code, not ours to lint; the
+# vendored mjviser bridge keeps upstream's 2-space style (see its
+# PROVENANCE.md) so diffs against the fork stay reviewable.
+extend-exclude = ["third_party", "kiwi/replay/mjviser"]

@@ -1,0 +1,8 @@
+{
+  "cpu_golden_sha256": "0f37b5a07842053300f6863b0464b9e018590e832b0636211d145d830cca9429",
+  "input": "default_rng(0) 960x960x3 uint8 noise + BGR(40,40,200) blob [300:600,300:600]",
+  "model_sha256": "ef94000bbc65ec33c6f802beb8751f4d6d4f6a8e082f97e5763b06c226e8e8b0",
+  "onnxruntime": "1.29.0 (supported: >=1.28,<2)",
+  "provider": "CPUExecutionProvider",
+  "schema": "segmentation_golden"
+}

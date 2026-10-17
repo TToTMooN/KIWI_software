@@ -1,0 +1,210 @@
+<?xml version="1.0" ?>
+<!-- Generated using onshape-to-robot -->
+<!-- Onshape https://cad.onshape.com/documents/eecabbca2b473235ed55f5da/w/12b51beda5c251ebfa3a2944/e/eee5f146c2d7ebba77b85c9a -->
+<robot name="ChopstickDC">
+  <!-- Link chopstickbase_dc__preloadlist__0_version____toptaper_true -->
+  <link name="chopstickbase_dc__preloadlist__0_version____toptaper_true">
+    <inertial>
+      <origin xyz="0.0349859 -1.16117e-05 0.0105828" rpy="0 0 0"/>
+      <mass value="0.3105"/>
+      <inertia ixx="0.00037745" ixy="1.73629e-06" ixz="-2.58092e-05" iyy="0.000405363" iyz="1.63847e-06" izz="0.000152385"/>
+    </inertial>
+    <!-- Part insta360_x5__47d4ae39761d23bd9bfcc1d54af43414 -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/insta360_x5__47d4ae39761d23bd9bfcc1d54af43414.stl"/>
+      </geometry>
+      <material name="insta360_x5__47d4ae39761d23bd9bfcc1d54af43414_material">
+        <color rgba="0.4 0.4 0.4 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/insta360_x5__47d4ae39761d23bd9bfcc1d54af43414.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part insta360x5_lite_frame__preloadlist__0_version____toptaper_true -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/insta360x5_lite_frame__preloadlist__0_version____toptaper_true.stl"/>
+      </geometry>
+      <material name="insta360x5_lite_frame__preloadlist__0_version____toptaper_true_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/insta360x5_lite_frame__preloadlist__0_version____toptaper_true.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part chopstickbase_dc__preloadlist__0_version____toptaper_true -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/chopstickbase_dc__preloadlist__0_version____toptaper_true.stl"/>
+      </geometry>
+      <material name="chopstickbase_dc__preloadlist__0_version____toptaper_true_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/chopstickbase_dc__preloadlist__0_version____toptaper_true.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part chopstickclip_dc__preloadlist__0_version____toptaper_true -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/chopstickclip_dc__preloadlist__0_version____toptaper_true.stl"/>
+      </geometry>
+      <material name="chopstickclip_dc__preloadlist__0_version____toptaper_true_material">
+        <color rgba="0.647059 0.647059 0.647059 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets/chopstickclip_dc__preloadlist__0_version____toptaper_true.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Frame hand_tcp (dummy link + fixed joint) -->
+  <link name="hand_tcp">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1e-9"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+  <joint name="hand_tcp_frame" type="fixed">
+    <origin xyz="0.188 0 -0.003" rpy="1.5708 -0 1.5708"/>
+    <parent link="chopstickbase_dc__preloadlist__0_version____toptaper_true"/>
+    <child link="hand_tcp"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+  <!-- Frame camera_lens0 (dummy link + fixed joint) - KIWI addition, not from the CAD export.
+       Optical frame of the gripper-mounted Insta360 X5 (OpenCV convention: +z along the
+       optical axis, +x right, +y down).
+
+       This pose is not a calibration of the DC design or of any physical build.
+       Replace it with an optical calibration of the handheld before using exported TCP
+       tracks. -->
+  <link name="camera_lens0">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1e-9"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+  <joint name="camera_lens0_frame" type="fixed">
+    <origin xyz="0.0489364502369 -5.10808940682e-07 0.0520573398093" rpy="-1.74155183316 -0.045446263995 -1.57141071787"/>
+    <parent link="chopstickbase_dc__preloadlist__0_version____toptaper_true"/>
+    <child link="camera_lens0"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+  <!-- Link left_finger_dc_spur_gear_24_teeth_1 -->
+  <link name="left_finger_dc_spur_gear_24_teeth_1">
+    <inertial>
+      <origin xyz="0.0339679 0.040647 -0.00152363" rpy="0 0 0"/>
+      <mass value="0.0352"/>
+      <inertia ixx="2.28871e-05" ixy="-2.09903e-05" ixz="8.58192e-07" iyy="3.12572e-05" iyz="2.22478e-07" izz="4.95214e-05"/>
+    </inertial>
+    <!-- Part chopstick___tpu_left_finger -->
+    <visual>
+      <origin xyz="-0.0105268 -0.0127182 0.0110083" rpy="-0 -0 -1.80292"/>
+      <geometry>
+        <mesh filename="package://assets/chopstick___tpu_left_finger.stl"/>
+      </geometry>
+      <material name="chopstick___tpu_left_finger_material">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.0105268 -0.0127182 0.0110083" rpy="-0 -0 -1.80292"/>
+      <geometry>
+        <mesh filename="package://assets/chopstick___tpu_left_finger.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part left_finger_dc_spur_gear_24_teeth_1 -->
+    <visual>
+      <origin xyz="0 -0 0.0007" rpy="-3.14159 0 -0.656093"/>
+      <geometry>
+        <mesh filename="package://assets/left_finger_dc_spur_gear_24_teeth_1.stl"/>
+      </geometry>
+      <material name="left_finger_dc_spur_gear_24_teeth_1_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 -0 0.0007" rpy="-3.14159 0 -0.656093"/>
+      <geometry>
+        <mesh filename="package://assets/left_finger_dc_spur_gear_24_teeth_1.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Joint from chopstickbase_dc__preloadlist__0_version____toptaper_true to left_finger_dc_spur_gear_24_teeth_1 -->
+  <joint name="rev_left" type="revolute">
+    <origin xyz="0.0673301 0.015 -0.00118708" rpy="-0 -0 -0.771531"/>
+    <parent link="chopstickbase_dc__preloadlist__0_version____toptaper_true"/>
+    <child link="left_finger_dc_spur_gear_24_teeth_1"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10" lower="-0.101134" upper="0.771531"/>
+  </joint>
+  <!-- Link right_finger_dc_sa_spur_gear_24_teeth_1 -->
+  <link name="right_finger_dc_sa_spur_gear_24_teeth_1">
+    <inertial>
+      <origin xyz="-0.0339267 0.0405443 -0.00155318" rpy="0 0 0"/>
+      <mass value="0.0352"/>
+      <inertia ixx="2.29997e-05" ixy="2.11161e-05" ixz="-8.56925e-07" iyy="3.13374e-05" iyz="2.3811e-07" izz="4.97245e-05"/>
+    </inertial>
+    <!-- Part right_finger_dc_sa_spur_gear_24_teeth_1 -->
+    <visual>
+      <origin xyz="0.019248 -0.015 0.0101963" rpy="0 -0 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets/right_finger_dc_sa_spur_gear_24_teeth_1.stl"/>
+      </geometry>
+      <material name="right_finger_dc_sa_spur_gear_24_teeth_1_material">
+        <color rgba="0.301961 0.301961 0.301961 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.019248 -0.015 0.0101963" rpy="0 -0 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets/right_finger_dc_sa_spur_gear_24_teeth_1.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part chopstick___tpu_right_finger -->
+    <visual>
+      <origin xyz="0.0105268 -0.0127182 0.0110083" rpy="0 -0 1.80292"/>
+      <geometry>
+        <mesh filename="package://assets/chopstick___tpu_right_finger.stl"/>
+      </geometry>
+      <material name="chopstick___tpu_right_finger_material">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0105268 -0.0127182 0.0110083" rpy="0 -0 1.80292"/>
+      <geometry>
+        <mesh filename="package://assets/chopstick___tpu_right_finger.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Joint from chopstickbase_dc__preloadlist__0_version____toptaper_true to right_finger_dc_sa_spur_gear_24_teeth_1 -->
+  <joint name="rev_right" type="revolute">
+    <origin xyz="0.0673301 -0.015 -0.00118708" rpy="0 -0 -2.37006"/>
+    <parent link="chopstickbase_dc__preloadlist__0_version____toptaper_true"/>
+    <child link="right_finger_dc_sa_spur_gear_24_teeth_1"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10" lower="-0.771531" upper="0.101134"/>
+    <mimic joint="rev_left" multiplier="-1.0"/>
+  </joint>
+</robot>

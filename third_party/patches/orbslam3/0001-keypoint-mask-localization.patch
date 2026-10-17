@@ -1,0 +1,228 @@
+Changes to ORB-SLAM3 (https://github.com/UZ-SLAMLab/ORB_SLAM3) for monocular map
+building with per-frame keypoint masks and monocular localization against a saved
+atlas. Applies to upstream V1.0, commit 4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4.
+The changed files remain under the GNU General Public License v3 of ORB-SLAM3.
+diff --git a/include/Frame.h b/include/Frame.h
+index 572073f..52da7cc 100644
+--- a/include/Frame.h
++++ b/include/Frame.h
+@@ -226,6 +226,8 @@ public:
+     // In the stereo case, mvKeysUn is redundant as images must be rectified.
+     // In the RGB-D case, RGB images can be distorted.
+     std::vector<cv::KeyPoint> mvKeys, mvKeysRight;
++    // Keypoints inside the exclude mask of the frame, never matched to map points; empty without a mask.
++    std::vector<bool> mvbKpMasked;
+     std::vector<cv::KeyPoint> mvKeysUn;
+ 
+     // Corresponding stereo coordinate and depth for each keypoint.
+diff --git a/include/KeyFrame.h b/include/KeyFrame.h
+index 1b8d1c4..37ea766 100644
+--- a/include/KeyFrame.h
++++ b/include/KeyFrame.h
+@@ -380,6 +380,8 @@ public:
+     // KeyPoints, stereo coordinate and descriptors (all associated by an index)
+     const std::vector<cv::KeyPoint> mvKeys;
+     const std::vector<cv::KeyPoint> mvKeysUn;
++    // Copied from the frame: keypoints that are never matched to map points.
++    std::vector<bool> mvbKpMasked;
+     const std::vector<float> mvuRight; // negative value for monocular points
+     const std::vector<float> mvDepth; // negative value for monocular points
+     const cv::Mat mDescriptors;
+diff --git a/include/System.h b/include/System.h
+index 872c86e..edf5155 100644
+--- a/include/System.h
++++ b/include/System.h
+@@ -171,6 +171,9 @@ public:
+     // SaveMap(const string &filename);
+     // LoadMap(const string &filename);
+ 
++    // Keypoint exclude mask for the next tracked frame: 8-bit, image size, values above 127 exclude.
++    void SetNextKpMask(const cv::Mat &mask);
++
+     // Information from most recent processed frame
+     // You can call this right after TrackMonocular (or stereo or RGBD)
+     int GetTrackingState();
+diff --git a/include/Tracking.h b/include/Tracking.h
+index 863c98e..403f0ca 100644
+--- a/include/Tracking.h
++++ b/include/Tracking.h
+@@ -73,6 +73,9 @@ public:
+     Sophus::SE3f GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const double &timestamp, string filename);
+     Sophus::SE3f GrabImageMonocular(const cv::Mat &im, const double &timestamp, string filename);
+ 
++    // Keypoint exclude mask of the next grabbed frame, released after use.
++    cv::Mat mNextKpMask;
++
+     void GrabImuData(const IMU::Point &imuMeasurement);
+ 
+     void SetLocalMapper(LocalMapping* pLocalMapper);
+diff --git a/src/Frame.cc b/src/Frame.cc
+index a04c312..bd8f021 100644
+--- a/src/Frame.cc
++++ b/src/Frame.cc
+@@ -56,7 +56,7 @@ Frame::Frame(const Frame &frame)
+     :mpcpi(frame.mpcpi),mpORBvocabulary(frame.mpORBvocabulary), mpORBextractorLeft(frame.mpORBextractorLeft), mpORBextractorRight(frame.mpORBextractorRight),
+      mTimeStamp(frame.mTimeStamp), mK(frame.mK.clone()), mK_(Converter::toMatrix3f(frame.mK)), mDistCoef(frame.mDistCoef.clone()),
+      mbf(frame.mbf), mb(frame.mb), mThDepth(frame.mThDepth), N(frame.N), mvKeys(frame.mvKeys),
+-     mvKeysRight(frame.mvKeysRight), mvKeysUn(frame.mvKeysUn), mvuRight(frame.mvuRight),
++     mvKeysRight(frame.mvKeysRight), mvKeysUn(frame.mvKeysUn), mvbKpMasked(frame.mvbKpMasked), mvuRight(frame.mvuRight),
+      mvDepth(frame.mvDepth), mBowVec(frame.mBowVec), mFeatVec(frame.mFeatVec),
+      mDescriptors(frame.mDescriptors.clone()), mDescriptorsRight(frame.mDescriptorsRight.clone()),
+      mvpMapPoints(frame.mvpMapPoints), mvbOutlier(frame.mvbOutlier), mImuCalib(frame.mImuCalib), mnCloseMPs(frame.mnCloseMPs),
+@@ -698,6 +698,8 @@ vector<size_t> Frame::GetFeaturesInArea(const float &x, const float  &y, const f
+ 
+             for(size_t j=0, jend=vCell.size(); j<jend; j++)
+             {
++                if(!mvbKpMasked.empty() && mvbKpMasked[vCell[j]])  // masked keypoint
++                    continue;
+                 const cv::KeyPoint &kpUn = (Nleft == -1) ? mvKeysUn[vCell[j]]
+                                                          : (!bRight) ? mvKeys[vCell[j]]
+                                                                      : mvKeysRight[vCell[j]];
+diff --git a/src/KeyFrame.cc b/src/KeyFrame.cc
+index 293ab48..722936c 100644
+--- a/src/KeyFrame.cc
++++ b/src/KeyFrame.cc
+@@ -48,7 +48,7 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
+     mnTrackReferenceForFrame(0), mnFuseTargetForKF(0), mnBALocalForKF(0), mnBAFixedForKF(0), mnBALocalForMerge(0),
+     mnLoopQuery(0), mnLoopWords(0), mnRelocQuery(0), mnRelocWords(0), mnBAGlobalForKF(0), mnPlaceRecognitionQuery(0), mnPlaceRecognitionWords(0), mPlaceRecognitionScore(0),
+     fx(F.fx), fy(F.fy), cx(F.cx), cy(F.cy), invfx(F.invfx), invfy(F.invfy),
+-    mbf(F.mbf), mb(F.mb), mThDepth(F.mThDepth), N(F.N), mvKeys(F.mvKeys), mvKeysUn(F.mvKeysUn),
++    mbf(F.mbf), mb(F.mb), mThDepth(F.mThDepth), N(F.N), mvKeys(F.mvKeys), mvKeysUn(F.mvKeysUn), mvbKpMasked(F.mvbKpMasked),
+     mvuRight(F.mvuRight), mvDepth(F.mvDepth), mDescriptors(F.mDescriptors.clone()),
+     mBowVec(F.mBowVec), mFeatVec(F.mFeatVec), mnScaleLevels(F.mnScaleLevels), mfScaleFactor(F.mfScaleFactor),
+     mfLogScaleFactor(F.mfLogScaleFactor), mvScaleFactors(F.mvScaleFactors), mvLevelSigma2(F.mvLevelSigma2),
+@@ -732,6 +732,8 @@ vector<size_t> KeyFrame::GetFeaturesInArea(const float &x, const float &y, const
+             const vector<size_t> vCell = (!bRight) ? mGrid[ix][iy] : mGridRight[ix][iy];
+             for(size_t j=0, jend=vCell.size(); j<jend; j++)
+             {
++                if(!mvbKpMasked.empty() && mvbKpMasked[vCell[j]])  // masked keypoint
++                    continue;
+                 const cv::KeyPoint &kpUn = (NLeft == -1) ? mvKeysUn[vCell[j]]
+                                                          : (!bRight) ? mvKeys[vCell[j]]
+                                                                      : mvKeysRight[vCell[j]];
+diff --git a/src/Map.cc b/src/Map.cc
+index f1f8cd0..317690a 100644
+--- a/src/Map.cc
++++ b/src/Map.cc
+@@ -359,7 +359,9 @@ void Map::SetLastMapChange(int currentChangeId)
+ void Map::PreSave(std::set<GeometricCamera*> &spCams)
+ {
+     int nMPWithoutObs = 0;
+-    for(MapPoint* pMPi : mspMapPoints)
++    // Iterate a copy: EraseObservation below can erase the point from mspMapPoints.
++    std::set<MapPoint*> spMapPoints = mspMapPoints;
++    for(MapPoint* pMPi : spMapPoints)
+     {
+         if(!pMPi || pMPi->isBad())
+             continue;
+diff --git a/src/ORBmatcher.cc b/src/ORBmatcher.cc
+index 9129683..5e7af08 100644
+--- a/src/ORBmatcher.cc
++++ b/src/ORBmatcher.cc
+@@ -275,6 +275,9 @@ namespace ORB_SLAM3
+                         if(F.Nleft == -1){
+                             const unsigned int realIdxF = vIndicesF[iF];
+ 
++                            if(!F.mvbKpMasked.empty() && F.mvbKpMasked[realIdxF])  // masked keypoint
++                                continue;
++
+                             if(vpMapPointMatches[realIdxF])
+                                 continue;
+ 
+@@ -968,6 +971,9 @@ namespace ORB_SLAM3
+                 {
+                     const size_t idx1 = f1it->second[i1];
+ 
++                    if(!pKF1->mvbKpMasked.empty() && pKF1->mvbKpMasked[idx1])  // masked keypoint
++                        continue;
++
+                     MapPoint* pMP1 = pKF1->GetMapPoint(idx1);
+ 
+                     // If there is already a MapPoint skip
+@@ -998,6 +1004,9 @@ namespace ORB_SLAM3
+                     {
+                         size_t idx2 = f2it->second[i2];
+ 
++                        if(!pKF2->mvbKpMasked.empty() && pKF2->mvbKpMasked[idx2])  // masked keypoint
++                            continue;
++
+                         MapPoint* pMP2 = pKF2->GetMapPoint(idx2);
+ 
+                         // If we have already matched or there is a MapPoint skip
+diff --git a/src/System.cc b/src/System.cc
+index 60d9c51..164f6e2 100644
+--- a/src/System.cc
++++ b/src/System.cc
+@@ -545,6 +545,10 @@ void System::Shutdown()
+         /*usleep(5000);
+     }*/
+ 
++    // Wait up to 5 s for local mapping and loop closing to stop before the atlas is saved.
++    for(int i=0; i<100 && (!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished()); i++)
++        usleep(50000);
++
+     if(!mStrSaveAtlasToFile.empty())
+     {
+         Verbose::PrintMess("Atlas saving to file " + mStrSaveAtlasToFile, Verbose::VERBOSITY_NORMAL);
+@@ -1318,6 +1322,11 @@ void System::SaveDebugData(const int &initIdx)
+ }
+ 
+ 
++void System::SetNextKpMask(const cv::Mat &mask)
++{
++    mpTracker->mNextKpMask = mask.clone();
++}
++
+ int System::GetTrackingState()
+ {
+     unique_lock<mutex> lock(mMutexState);
+diff --git a/src/Tracking.cc b/src/Tracking.cc
+index 5191451..6133628 100644
+--- a/src/Tracking.cc
++++ b/src/Tracking.cc
+@@ -1604,6 +1604,15 @@ Sophus::SE3f Tracking::GrabImageMonocular(const cv::Mat &im, const double &times
+     mCurrentFrame.mNameFile = filename;
+     mCurrentFrame.mnDataset = mnNumDataset;
+ 
++    // Flag the keypoints that lie inside the exclude mask of this frame.
++    if(mNextKpMask.size()==mImGray.size())
++    {
++        mCurrentFrame.mvbKpMasked.resize(mCurrentFrame.N);
++        for(int i=0; i<mCurrentFrame.N; i++)
++            mCurrentFrame.mvbKpMasked[i] = mNextKpMask.at<uchar>(cv::Point(mCurrentFrame.mvKeys[i].pt))>127;
++    }
++    mNextKpMask.release();
++
+ #ifdef REGISTER_TIMES
+     vdORBExtract_ms.push_back(mCurrentFrame.mTimeORB_Ext);
+ #endif
+@@ -1898,7 +1907,18 @@ void Tracking::Track()
+ 
+     if(mState==NOT_INITIALIZED)
+     {
+-        if(mSensor==System::STEREO || mSensor==System::RGBD || mSensor==System::IMU_STEREO || mSensor==System::IMU_RGBD)
++        // Localization mode: relocalize in the largest map of the loaded atlas instead of initializing a new map.
++        Map* pLargestMap = nullptr;
++        if(mbOnlyTracking)
++            for(Map* pMap : mpAtlas->GetAllMaps())
++                if(pMap->KeyFramesInMap()>0 && (!pLargestMap || pMap->KeyFramesInMap()>pLargestMap->KeyFramesInMap()))
++                    pLargestMap = pMap;
++        if(pLargestMap)
++        {
++            mpAtlas->ChangeMap(pLargestMap);
++            mState = LOST;
++        }
++        else if(mSensor==System::STEREO || mSensor==System::RGBD || mSensor==System::IMU_STEREO || mSensor==System::IMU_RGBD)
+         {
+             StereoInitialization();
+         }
+@@ -2036,7 +2056,8 @@ void Tracking::Track()
+         else
+         {
+             // Localization Mode: Local Mapping is deactivated (TODO Not available in inertial mode)
+-            if(mState==LOST)
++            // Localization mode has no RECENTLY_LOST -> LOST timeout, so relocalize from both states.
++            if(mState==LOST || mState==RECENTLY_LOST)
+             {
+                 if(mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD)
+                     Verbose::PrintMess("IMU. State LOST", Verbose::VERBOSITY_NORMAL);

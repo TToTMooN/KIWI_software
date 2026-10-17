@@ -1,0 +1,512 @@
+/* ==========================================================================
+   KIWI - Kinematic interface for the wild
+   Documentation theme, derived from the logo palette.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Palette tokens - every colour below is pulled from the logo artwork.
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* fruit greens */
+  --kiwi-green-900: #23400f;
+  --kiwi-green-800: #33591a;
+  --kiwi-green-700: #4f8f2c;
+  --kiwi-green-600: #6ea331;
+  --kiwi-green-500: #7fae3c;
+  --kiwi-green-400: #a8ca5a;
+  --kiwi-green-300: #c7dd94;
+  --kiwi-green-200: #dcefb4;
+  --kiwi-green-100: #eef6dc;
+
+  /* fruit core */
+  --kiwi-cream: #f4f7e4;
+
+  /* bird plumage */
+  --kiwi-brown-700: #6f5236;
+  --kiwi-brown-500: #8d6a45;
+  --kiwi-brown-300: #a07c53;
+
+  /* beak and feet - reserved for accents, never for body text */
+  --kiwi-amber-600: #c4762a;
+  --kiwi-amber-500: #d98432;
+  --kiwi-amber-400: #f0a63c;
+
+  /* seed */
+  --kiwi-ink: #221f18;
+  --kiwi-ink-muted: #5c5a4e;
+
+  /* geometry */
+  --kiwi-radius: 6px;
+  --kiwi-radius-lg: 12px;
+  --kiwi-rule: 1px solid var(--kiwi-green-200);
+}
+
+/* --------------------------------------------------------------------------
+   2. Light scheme
+   -------------------------------------------------------------------------- */
+
+[data-md-color-scheme="kiwi"] {
+  --md-primary-fg-color: var(--kiwi-green-700);
+  --md-primary-fg-color--light: var(--kiwi-green-500);
+  --md-primary-fg-color--dark: var(--kiwi-green-800);
+  --md-primary-bg-color: var(--kiwi-cream);
+  --md-primary-bg-color--light: rgba(244, 247, 228, 0.75);
+
+  --md-accent-fg-color: var(--kiwi-amber-600);
+  --md-accent-fg-color--transparent: rgba(196, 118, 42, 0.1);
+  --md-accent-bg-color: var(--kiwi-cream);
+
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: var(--kiwi-ink);
+  --md-default-fg-color--light: var(--kiwi-ink-muted);
+  --md-default-fg-color--lighter: #8b8878;
+  --md-default-fg-color--lightest: #d8d6c8;
+
+  --md-typeset-color: var(--kiwi-ink);
+  --md-typeset-a-color: var(--kiwi-green-700);
+
+  --md-code-bg-color: var(--kiwi-green-100);
+  --md-code-fg-color: var(--kiwi-green-900);
+  --md-code-hl-keyword-color: var(--kiwi-green-800);
+  --md-code-hl-function-color: var(--kiwi-brown-700);
+  --md-code-hl-string-color: var(--kiwi-amber-600);
+  --md-code-hl-number-color: var(--kiwi-brown-500);
+  --md-code-hl-comment-color: #8b8878;
+
+  --md-footer-bg-color: var(--kiwi-green-900);
+  --md-footer-bg-color--dark: #1a300b;
+  --md-footer-fg-color: var(--kiwi-cream);
+
+  --md-shadow-z1: 0 1px 2px rgba(34, 31, 24, 0.06);
+  --md-shadow-z2: 0 3px 10px rgba(34, 31, 24, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   3. Dark scheme - the fruit read on a seed-dark ground.
+   -------------------------------------------------------------------------- */
+
+[data-md-color-scheme="kiwi-dark"] {
+  color-scheme: dark;
+
+  --md-primary-fg-color: #1d2417;
+  --md-primary-fg-color--light: #2a3320;
+  --md-primary-fg-color--dark: #151a11;
+  --md-primary-bg-color: var(--kiwi-green-200);
+
+  --md-accent-fg-color: var(--kiwi-amber-400);
+  --md-accent-fg-color--transparent: rgba(240, 166, 60, 0.12);
+
+  --md-default-bg-color: #171c12;
+  --md-default-fg-color: #e6ead6;
+  --md-default-fg-color--light: #b3b8a4;
+  --md-default-fg-color--lighter: #7d8272;
+  --md-default-fg-color--lightest: #3a4030;
+
+  --md-typeset-color: #e6ead6;
+  --md-typeset-a-color: var(--kiwi-green-400);
+
+  --md-code-bg-color: #1f2619;
+  --md-code-fg-color: #dbe4c6;
+  --md-code-hl-keyword-color: var(--kiwi-green-400);
+  --md-code-hl-function-color: var(--kiwi-brown-300);
+  --md-code-hl-string-color: var(--kiwi-amber-400);
+  --md-code-hl-number-color: #c7dd94;
+  --md-code-hl-comment-color: #7d8272;
+
+  --md-footer-bg-color: #12160e;
+  --md-footer-bg-color--dark: #0d1009;
+
+  --kiwi-rule: 1px solid #2f3a24;
+}
+
+/* --------------------------------------------------------------------------
+   4. Typography
+   -------------------------------------------------------------------------- */
+
+.md-typeset h1 {
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h2 {
+  margin-top: 2.2em;
+  padding-bottom: 0.3em;
+  border-bottom: var(--kiwi-rule);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.md-typeset h3 {
+  color: var(--kiwi-green-700);
+  font-weight: 600;
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset h3 {
+  color: var(--kiwi-green-400);
+}
+
+.md-typeset h4 {
+  color: var(--md-default-fg-color--light);
+  font-weight: 600;
+  text-transform: none;
+}
+
+/* Anchor markers pick up the beak orange rather than the default grey. */
+.md-typeset .headerlink {
+  color: var(--md-default-fg-color--lightest);
+  transition: color 120ms;
+}
+
+.md-typeset :hover > .headerlink,
+.md-typeset .headerlink:focus {
+  color: var(--kiwi-amber-500);
+}
+
+/* --------------------------------------------------------------------------
+   5. Header, nav, search
+   -------------------------------------------------------------------------- */
+
+.md-header {
+  box-shadow: 0 1px 0 rgba(34, 31, 24, 0.08);
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 1.8rem;
+  width: auto;
+}
+
+.md-tabs {
+  background-color: var(--md-primary-fg-color--dark);
+}
+
+/* Active nav item gets a seed-green rail, matching the slice's outer ring. */
+.md-nav__link--active,
+.md-nav__link:hover {
+  color: var(--kiwi-green-700);
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-nav__link--active,
+[data-md-color-scheme="kiwi-dark"] .md-nav__link:hover {
+  color: var(--kiwi-green-400);
+}
+
+.md-nav__item .md-nav__link--active {
+  font-weight: 600;
+}
+
+.md-sidebar--secondary .md-nav__link--active {
+  border-left: 2px solid var(--kiwi-green-500);
+  padding-left: 0.5rem;
+  margin-left: -0.6rem;
+}
+
+.md-search__form {
+  border-radius: var(--kiwi-radius);
+}
+
+.md-search-result__link:hover,
+.md-search-result__link[data-md-state="active"] {
+  background-color: var(--kiwi-green-100);
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-search-result__link:hover {
+  background-color: #22291a;
+}
+
+/* --------------------------------------------------------------------------
+   6. Code
+   -------------------------------------------------------------------------- */
+
+.md-typeset code {
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+.md-typeset pre > code {
+  border: var(--kiwi-rule);
+  border-radius: var(--kiwi-radius);
+}
+
+.md-typeset .highlight span.filename {
+  background-color: var(--kiwi-green-200);
+  border-bottom: none;
+  border-radius: var(--kiwi-radius) var(--kiwi-radius) 0 0;
+  color: var(--kiwi-green-900);
+  font-weight: 500;
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset .highlight span.filename {
+  background-color: #2a3320;
+  color: var(--kiwi-green-200);
+}
+
+.md-clipboard {
+  color: var(--md-default-fg-color--lighter);
+}
+
+.md-clipboard:hover {
+  color: var(--kiwi-amber-500);
+}
+
+/* Tabbed code blocks - the selected tab carries the fruit green. */
+.md-typeset .tabbed-labels > label {
+  font-weight: 500;
+}
+
+.md-typeset .tabbed-set > input:checked + label {
+  border-color: var(--kiwi-green-500);
+  color: var(--kiwi-green-700);
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset .tabbed-set > input:checked + label {
+  color: var(--kiwi-green-400);
+}
+
+/* --------------------------------------------------------------------------
+   7. Admonitions - three tinted families instead of Material's rainbow.
+   -------------------------------------------------------------------------- */
+
+.md-typeset .admonition,
+.md-typeset details {
+  border: var(--kiwi-rule);
+  border-left-width: 3px;
+  border-radius: 0 var(--kiwi-radius) var(--kiwi-radius) 0;
+  box-shadow: none;
+  font-size: 0.75rem;
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+  font-weight: 600;
+}
+
+/* note / info / abstract - fruit green */
+.md-typeset .note,
+.md-typeset .info,
+.md-typeset .abstract {
+  border-left-color: var(--kiwi-green-500);
+}
+
+.md-typeset .note > .admonition-title,
+.md-typeset .info > .admonition-title,
+.md-typeset .abstract > .admonition-title {
+  background-color: var(--kiwi-green-100);
+  color: var(--kiwi-green-900);
+}
+
+/* tip / success - deeper green */
+.md-typeset .tip,
+.md-typeset .success {
+  border-left-color: var(--kiwi-green-700);
+}
+
+.md-typeset .tip > .admonition-title,
+.md-typeset .success > .admonition-title {
+  background-color: var(--kiwi-green-200);
+  color: var(--kiwi-green-900);
+}
+
+/* warning - beak amber */
+.md-typeset .warning,
+.md-typeset .caution {
+  border-left-color: var(--kiwi-amber-500);
+}
+
+.md-typeset .warning > .admonition-title,
+.md-typeset .caution > .admonition-title {
+  background-color: rgba(240, 166, 60, 0.16);
+  color: #8a5416;
+}
+
+/* danger / bug - plumage brown, kept distinct from the amber warnings */
+.md-typeset .danger,
+.md-typeset .bug,
+.md-typeset .failure {
+  border-left-color: var(--kiwi-brown-500);
+}
+
+.md-typeset .danger > .admonition-title,
+.md-typeset .bug > .admonition-title,
+.md-typeset .failure > .admonition-title {
+  background-color: rgba(141, 106, 69, 0.16);
+  color: var(--kiwi-brown-700);
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset .note > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .info > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .abstract > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .tip > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .success > .admonition-title {
+  background-color: #22291a;
+  color: var(--kiwi-green-200);
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset .warning > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .caution > .admonition-title {
+  color: var(--kiwi-amber-400);
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset .danger > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .bug > .admonition-title,
+[data-md-color-scheme="kiwi-dark"] .md-typeset .failure > .admonition-title {
+  color: var(--kiwi-brown-300);
+}
+
+/* --------------------------------------------------------------------------
+   8. Tables, quotes, rules
+   -------------------------------------------------------------------------- */
+
+.md-typeset table:not([class]) {
+  border: var(--kiwi-rule);
+  border-radius: var(--kiwi-radius);
+  box-shadow: none;
+  font-size: 0.72rem;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--kiwi-green-100);
+  color: var(--kiwi-green-900);
+  font-weight: 600;
+}
+
+[data-md-color-scheme="kiwi-dark"] .md-typeset table:not([class]) th {
+  background-color: #22291a;
+  color: var(--kiwi-green-200);
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background-color: rgba(127, 174, 60, 0.06);
+}
+
+.md-typeset blockquote {
+  border-left: 3px solid var(--kiwi-green-400);
+  color: var(--md-default-fg-color--light);
+}
+
+.md-typeset hr {
+  border-bottom: var(--kiwi-rule);
+}
+
+/* --------------------------------------------------------------------------
+   9. Buttons and links
+   -------------------------------------------------------------------------- */
+
+.md-typeset .md-button {
+  border: 1px solid var(--kiwi-green-700);
+  border-radius: var(--kiwi-radius);
+  color: var(--kiwi-green-700);
+  font-weight: 500;
+  transition: background-color 120ms, color 120ms, border-color 120ms;
+}
+
+.md-typeset .md-button:hover,
+.md-typeset .md-button:focus {
+  background-color: var(--kiwi-green-700);
+  border-color: var(--kiwi-green-700);
+  color: var(--kiwi-cream);
+}
+
+.md-typeset .md-button--primary {
+  background-color: var(--kiwi-green-700);
+  border-color: var(--kiwi-green-700);
+  color: var(--kiwi-cream);
+}
+
+.md-typeset .md-button--primary:hover,
+.md-typeset .md-button--primary:focus {
+  background-color: var(--kiwi-green-800);
+  border-color: var(--kiwi-green-800);
+}
+
+/* --------------------------------------------------------------------------
+   10. Footer
+   -------------------------------------------------------------------------- */
+
+.md-footer-meta {
+  background-color: var(--md-footer-bg-color--dark);
+}
+
+.md-footer__link:hover {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   11. Accessibility floor
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--kiwi-amber-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Derived Material tokens
+
+   Material declares a second tier of tokens on `:root` in terms of the first
+   tier, e.g. `--md-admonition-bg-color: var(--md-default-bg-color)`. A colour
+   scheme lands on <body>, one level below :root, so those var() references
+   still resolve against the LIGHT values at :root - the stock `slate` scheme
+   re-declares all 25 of them for exactly this reason. A custom scheme has to
+   do the same or the dark page shows white admonitions, invisible table
+   rules, and Material's stock indigo in the syntax highlighting.
+   -------------------------------------------------------------------------- */
+
+[data-md-color-scheme="kiwi"] {
+  /* Highlight and the code tokens section 2 left at Material's indigo set. */
+  --md-code-hl-color: var(--kiwi-amber-400);
+  --md-code-hl-color--light: rgba(240, 166, 60, 0.14);
+  --md-code-hl-name-color: var(--md-code-fg-color);
+  --md-code-hl-constant-color: var(--kiwi-brown-700);
+  --md-code-hl-special-color: var(--kiwi-amber-600);
+  --md-code-hl-operator-color: var(--kiwi-green-800);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color--light);
+  --md-code-hl-generic-color: var(--md-default-fg-color--light);
+  --md-code-hl-variable-color: var(--kiwi-brown-700);
+
+  --md-typeset-mark-color: rgba(240, 166, 60, 0.3);
+  --md-typeset-table-color: rgba(34, 31, 24, 0.12);
+  --md-typeset-table-color--light: rgba(34, 31, 24, 0.035);
+}
+
+[data-md-color-scheme="kiwi-dark"] {
+  --md-admonition-fg-color: var(--md-default-fg-color);
+  --md-admonition-bg-color: var(--md-default-bg-color);
+
+  --md-default-bg-color--light: rgba(23, 28, 18, 0.75);
+  --md-default-bg-color--lighter: rgba(23, 28, 18, 0.45);
+  --md-default-bg-color--lightest: rgba(23, 28, 18, 0.12);
+
+  --md-code-bg-color--light: rgba(31, 38, 25, 0.7);
+  --md-code-bg-color--lighter: rgba(31, 38, 25, 0.45);
+  --md-code-hl-color: var(--kiwi-amber-400);
+  --md-code-hl-color--light: rgba(240, 166, 60, 0.16);
+  --md-code-hl-name-color: var(--md-code-fg-color);
+  --md-code-hl-constant-color: var(--kiwi-green-300);
+  --md-code-hl-special-color: var(--kiwi-amber-500);
+  --md-code-hl-operator-color: var(--kiwi-green-300);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color--light);
+  --md-code-hl-generic-color: var(--md-default-fg-color--light);
+  --md-code-hl-variable-color: var(--kiwi-brown-300);
+
+  --md-typeset-kbd-color: #22291a;
+  --md-typeset-kbd-accent-color: #313a26;
+  --md-typeset-kbd-border-color: #10140c;
+  --md-typeset-mark-color: rgba(240, 166, 60, 0.32);
+  --md-typeset-table-color: rgba(230, 234, 214, 0.18);
+  --md-typeset-table-color--light: rgba(230, 234, 214, 0.05);
+
+  --md-shadow-z1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --md-shadow-z2: 0 3px 10px rgba(0, 0, 0, 0.5);
+  --md-shadow-z3: 0 6px 22px rgba(0, 0, 0, 0.6);
+}

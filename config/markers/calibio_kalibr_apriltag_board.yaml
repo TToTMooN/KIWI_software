@@ -1,0 +1,29 @@
+# calib.io Kalibr/AprilGrid target (calib.io product, 800x600mm plate).
+#   grid:         10 cols x 7 rows  (70 tags total)
+#   tag size:     50 mm
+#   tag spacing:  15 mm  ->  0.30 as fraction of tag size (Kalibr ratio)
+#   dictionary:   AprilTag 36h11
+#   start_id:     0      (calib.io 'Start Id')
+#
+# IDs increment row-major from the bottom-left tag (Kalibr convention).
+
+# Border convention: this is a Kalibr-style AprilGrid, so
+# each tag carries a 2-CELL black border, not the 1-cell border OpenCV assumes
+# for standalone ArUco markers. `tag_size` (50mm) therefore spans all
+# 6 + 2*2 = 10 cells of the printed black square, at 5mm per cell.
+#   - Kalibr draws it: createTargetPDF.py, `bitSquareSize = metricSize /
+#     (sqrtBits + borderBits*2)` with borderBits=2.
+#   - Kalibr detects it: GridCalibrationTargetAprilgrid.hpp, blackTagBorder(2).
+# Detecting this board with border_bits=1 does NOT fail loudly - it finds
+# fewer tags and returns quads smaller than the printed square.
+
+apriltag_grid:
+  calib_io_10x7:
+    tag_cols: 10
+    tag_rows: 7
+    tag_size: 0.050
+    tag_spacing: 0.30
+    dictionary: DICT_APRILTAG_36h11
+    border_bits: 2
+    start_id: 0
+    label: "calib.io 10x7 AprilGrid (50mm tag, 15mm spacing)"

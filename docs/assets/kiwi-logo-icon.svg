@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="kiwiIconTitle">
+  <title id="kiwiIconTitle">KIWI icon</title>
+  <g transform="translate(8 -4) scale(1.51)">
+    <circle cx="138" cy="92" r="50" fill="#8d6a45"/>
+    <path d="M98 80 L16 114 L102 104 Z" fill="#f0a63c"/>
+    <path d="M98 92 L16 114 L100 102 Z" fill="#d98432"/>
+    <circle cx="152" cy="78" r="10" fill="#2b2620"/>
+    <circle cx="200" cy="190" r="112" fill="#8d6a45"/>
+    <circle cx="200" cy="190" r="101" fill="#7fae3c"/>
+    <circle cx="200" cy="190" r="36" fill="#f4f7e4"/>
+  </g>
+</svg>

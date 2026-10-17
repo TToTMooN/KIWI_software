@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff==0.15.16
+      - run: ruff check .
+      - run: ruff format --check .
+
+  lock:
+    # pixi.lock is up to date with pixi.toml and pyproject.toml.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.11.2
+        with:
+          pixi-version: v0.82.0
+          run-install: false
+      - run: pixi lock --check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # [replay] pulls yourdfpy + xacro so the descriptions/ tests (URDF
+      # loads, meshes resolve, render matches snapshot) execute, not skip.
+      # [gui] and ffmpeg exercise actual preview encoding and Rerun loading,
+      # including the regression for concurrent writes to one preview.
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - run: pip install -e .[replay,gui] pytest
+      # -v lists every test case by name in the job log; the summary page
+      # gets the same list so reviewers see WHAT ran, not just a pass count.
+      #
+      # `shell: bash` is load-bearing, not decoration. A bare `run:` uses
+      # `bash -e {0}` with NO pipefail, so the exit status of `pytest | tee` is
+      # tee's - always 0 - and every failing test would pass CI silently. The
+      # explicit shell is `bash --noprofile --norc -eo pipefail {0}`.
+      - run: pytest -v -ra | tee pytest.log
+        shell: bash
+      - name: Test list in the run summary
+        if: always()
+        run: |
+          echo '### pytest cases' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -E '(PASSED|FAILED|ERROR|SKIPPED|XFAIL|XPASS)' pytest.log >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  loadback:
+    # The native LeRobot writer against the stock lerobot reader. lerobot
+    # pins its own torch and cv2, so the reader runs in a second venv (CPU
+    # torch from the PyTorch index) and imports nothing from kiwi.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .
+      - run: python tests/export/loadback/write_fixture.py build/loadback
+      - run: |
+          python -m venv lerobot-env
+          lerobot-env/bin/pip install --index-url https://download.pytorch.org/whl/cpu \
+              --extra-index-url https://pypi.org/simple 'lerobot>=0.4,<0.5'
+      - run: lerobot-env/bin/python tests/export/loadback/load_fixture.py build/loadback

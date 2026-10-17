@@ -1,0 +1,27 @@
+# insta360-GO3-001 - Insta360 GO 3 camera registry entry.
+#
+# Head-mounted ego camera, single lens. Calibrated 2026-09-12 through the
+# single-lens calib path: pinhole-equi intrinsics + cam<->IMU
+# extrinsic. Intrinsics are MODE-KEYED: GO3 video modes are different sensor
+# crops with different optical mappings (square 2688x2688 vs 16:9 is not a
+# rescale), so each recorded mode carries its own profile, resolved by the
+# recording's frame size (CameraUnit.artifact_for_size). The extrinsic stays
+# a single pointer: T_cam_imu and the timeshift are physical camera<->IMU
+# constants, solved once (in square mode, against that mode's intrinsics).
+# Absent by design: no rear anything (single lens - `kiwi calib imu check`'s
+# front/back composition does not apply, solves gate on report residuals),
+# no KB4 export, no measured imu-noise (solved with the standard priors).
+serial: null   # selected by name via `cameras.<label>.camera:`, never auto-matched
+               # (its mp4s do carry ~994 Hz gyro telemetry - that is what the
+               # imu-cam solve reads - but serial binding stays name-based)
+model: Insta360 GO 3
+nickname: insta360-GO3-001
+intrinsics:                        # K/D pinhole-equi, one profile per video mode
+  2688x2688: intrinsics-2688x2688.npz   # square Pro Video (ego deployment mode)
+  2720x1536: intrinsics-2720x1536.npz   # 16:9 2.7K
+  2560x1440: intrinsics-2560x1440.npz   # 16:9 1440p
+extrinsic_imu: extrinsic-imu.yaml   # T_cam_imu + timeshift (square-mode solve)
+av_sync: av-sync.yaml   # per-recording-mode audio-vs-video delay
+# The GO3 clip carries no SMPTE tmcd stream, so it is placed on the global
+# clock by audio cross-correlation (kiwi.sync.audio), which needs that table to
+# convert an audio offset into a video offset.

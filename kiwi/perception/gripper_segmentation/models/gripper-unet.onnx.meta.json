@@ -1,0 +1,49 @@
+{
+  "class_mapping": {
+    "background": 0,
+    "mask_out": [
+      1,
+      2,
+      3
+    ],
+    "other_gripper": 2,
+    "own_gripper": 1,
+    "person": 3
+  },
+  "exported_by": "pytorch 2.13.0+cu130 (trained 2026-07-30)",
+  "mask_polarity": "nonzero_excluded_0_255",
+  "model_format": "onnx",
+  "model_sha256": "ef94000bbc65ec33c6f802beb8751f4d6d4f6a8e082f97e5763b06c226e8e8b0",
+  "model_version": "unet_v1",
+  "notes": "Production inference applies plain argmax over class logits. The training reference uses post-processing (threshold 0.5, dilate_ksize 9, min_component_area 200) that is excluded from this artifact; single-frame IoU against that reference is 0.857.",
+  "onnx_ir_version": 10,
+  "onnx_opset": 18,
+  "preprocess_schema": {
+    "channel_order": "rgb",
+    "input_size": [
+      640,
+      640
+    ],
+    "layout": "nchw",
+    "normalize": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    }
+  },
+  "schema": "segmentation_model",
+  "source": {
+    "asset": "gripper-unet-v1.onnx",
+    "release_tag": "model/gripper-unet-v1",
+    "repo": "TToTMooN/KIWI_software",
+    "size_bytes": 31126465
+  },
+  "supported_onnxruntime": ">=1.28,<2"
+}

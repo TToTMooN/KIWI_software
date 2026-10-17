@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+message: "If you use KIWI in your research, please cite it."
+title: "KIWI: Kinematic Interface for the Wild"
+type: software
+version: 0.1.0
+date-released: 2026-10-17
+authors:
+  - family-names: Yang
+    given-names: Benjamin C.
+  - family-names: Wang
+    given-names: Weiying
+  - family-names: Li
+    given-names: Shenggao
+  - family-names: Yan
+    given-names: Keming
+  - family-names: Wilkinson
+    given-names: Sasha
+  - family-names: Wang
+    given-names: Zelin
+  - family-names: Yeung
+    given-names: Yip Fun
+  - family-names: Sun
+    given-names: Lingfeng
+repository-code: "https://github.com/TToTMooN/KIWI_software"
+url: "https://lingfeng.moe/KIWI/"
+license: Apache-2.0
+keywords:
+  - robotics
+  - imitation learning
+  - data collection
+  - egocentric
+  - bimanual manipulation
+preferred-citation:
+  type: article
+  title: "Kinematic Interface for the Wild: Modular Bimanual Loco-Manipulation Capture from 360° Cameras Alone"
+  authors:
+    - family-names: Yang
+      given-names: Benjamin C.
+    - family-names: Wang
+      given-names: Weiying
+    - family-names: Li
+      given-names: Shenggao
+    - family-names: Yan
+      given-names: Keming
+    - family-names: Wilkinson
+      given-names: Sasha
+    - family-names: Wang
+      given-names: Zelin
+    - family-names: Yeung
+      given-names: Yip Fun
+    - family-names: Sun
+      given-names: Lingfeng
+  journal: "arXiv preprint arXiv:2609.22809"
+  year: 2026
+  doi: 10.48550/arXiv.2609.22809
+  url: "https://arxiv.org/abs/2609.22809"

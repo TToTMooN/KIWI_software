@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="316" viewBox="6 34 600 316" role="img" aria-labelledby="kiwiLockupTitle">
+  <title id="kiwiLockupTitle">KIWI - Kinematic interface for the wild</title>
+  <g id="legs">
+    <path d="M175 288 L172 335 L152 335" fill="none" stroke="#c4762a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M175 335 L196 335" fill="none" stroke="#c4762a" stroke-width="9" stroke-linecap="round"/>
+    <path d="M232 288 L236 335 L216 335" fill="none" stroke="#d98432" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M239 335 L260 335" fill="none" stroke="#d98432" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <g id="head">
+    <circle cx="138" cy="92" r="50" fill="#8d6a45"/>
+    <path d="M98 80 L16 114 L102 104 Z" fill="#f0a63c"/>
+    <path d="M98 92 L16 114 L100 102 Z" fill="#d98432"/>
+    <circle cx="152" cy="78" r="8.5" fill="#2b2620"/>
+    <circle cx="155" cy="75" r="2.8" fill="#ffffff"/>
+  </g>
+  <g id="body">
+    <circle cx="200" cy="190" r="112" fill="#8d6a45"/>
+    <circle cx="200" cy="190" r="101" fill="#7fae3c"/>
+    <circle cx="200" cy="190" r="78" fill="#a8ca5a"/>
+    <circle cx="200" cy="190" r="36" fill="#f4f7e4"/>
+  </g>
+  <g id="seeds" fill="#221f18">
+    <ellipse cx="200" cy="132" rx="4" ry="8"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(30 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(60 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(90 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(120 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(150 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(180 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(210 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(240 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(270 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(300 200 190)"/>
+    <ellipse cx="200" cy="132" rx="4" ry="8" transform="rotate(330 200 190)"/>
+  </g>
+  <g id="wordmark">
+    <text x="348" y="188" fill="#4f8f2c" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="62" font-weight="500" letter-spacing="6">KIWI</text>
+    <text x="350" y="218" fill="#7a8a6a" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" letter-spacing="1.4">Kinematic interface for the wild</text>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+# Cam <-> IMU extrinsic for insta360-X5-001 (front lens), from Kalibr
+# kalibr_calibrate_imu_camera, run 2026-05-21.
+#
+# cam0.T_cam_imu: p_cam = T_cam_imu @ p_imu, i.e. R_ItoC | p_IinC (rotation from
+# IMU to camera and position of the IMU in the camera frame). Valid for both the
+# raw fisheye frame and the rectified pinhole frame, because the project's
+# DS->pinhole rectifier uses an identity rotation about the same optical centre
+# (see kiwi/core/rectify.py::Rectifier.build_double_sphere).
+#
+# Plain YAML (PyYAML-parseable), read via cam0.T_cam_imu by
+# kiwi.core.camera.extrinsics.load_T_cam_imu.
+# Kalibr T_cam_imu maps IMU coordinates into this optical camera frame.
+cam0:
+  T_cam_imu:
+  - [0.019624474030407676, -0.008083507795396088, -0.9997747430900396, -0.013447480817129001]
+  - [-0.03532659008606564, -0.9993485225818979, 0.007386639714518566, 0.008634605413065616]
+  - [-0.9991831223814401, 0.03517367360829381, -0.019897251895080185, -0.010158781647541715]
+  - [0.0, 0.0, 0.0, 1.0]
+  timeshift_cam_imu: -0.0076368120202529016
+  camera_model: ds
+  distortion_model: none
+  distortion_coeffs: []
+  intrinsics: [-0.02307968230948963, 0.5714604346742145, 499.6405801445575, 499.53717969236584, 962.2968252678647, 961.4321020917223]
+  resolution: [1920, 1920]

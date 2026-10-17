@@ -1,0 +1,40 @@
+digraph data_schema_flow {
+  graph [rankdir=TB, bgcolor="#ffffff", pad=0.25, nodesep=0.35, ranksep=0.4,
+    fontname="DejaVu Sans", fontsize=17, labelloc=t,
+    label="KIWI: recordings to hands, optional head and floor\nMain result flow; the module table lists each stage's full inputs"];
+  node [shape=box, style="rounded,filled", fillcolor="#f5f8f1", color="#557846",
+    fontname="DejaVu Sans", fontsize=14, margin="0.14,0.10"];
+  edge [color="#60736a", arrowsize=0.75, fontname="DejaVu Sans", fontsize=11];
+  raw [label="Raw camera recordings (.insv / .mp4)", fillcolor="#eaf0f6", color="#60758b"];
+  config [label="Deployment config → episode/config/\nCopy once; episode consumers use local files", fillcolor="#eaf0f6", color="#60758b"];
+  prep [label="Prepare episode\nSynchronize clocks + convert lens videos"];
+  imu [label="Extract raw IMU as needed\nCached samples + clock offset + provenance"];
+  maps [label="Scene Building\n3 atlases + metric scale + scene placement"];
+  loc [label="Localization\nArm front/rear cameras in the shared scene"];
+  state [label="State estimation per arm\nFront-camera pose + IMU-body pose"];
+  eef [label="Tool estimation\nOpening + fit quality"];
+  head [label="Optional head estimation\nArm states + rear videos → marker pose", fillcolor="#fff6e5", color="#b08937"];
+  ground [label="Optional ground estimation\nArm states + front videos → floor height", fillcolor="#fff6e5", color="#b08937"];
+  export [label="Export one time grid\nHand tool-tip pose + opening, videos\nOptional head marker pose / valid / segment ID\nOptional floor plane + camera height"];
+  result [label="Dataset tables + videos\nHand state stays 16 numbers for 2 arms\nSource records + quality + sampling correspondence", fillcolor="#dff0db", color="#427638", penwidth=1.8];
+  config -> prep [label="calibration + settings"];
+  config -> export [style=dashed, label="archive local configs"];
+  raw -> prep;
+  raw -> imu;
+  prep -> maps;
+  imu -> maps;
+  maps -> loc;
+  loc -> state;
+  prep -> eef;
+  prep -> state [label="clock"];
+  imu -> state;
+  state -> head;
+  state -> ground;
+  state -> export;
+  head -> export [style=dashed, label="opt-in"];
+  ground -> export [style=dashed, label="opt-in"];
+  eef -> export;
+  export -> result;
+  {rank=same; maps; eef;}
+  {rank=same; head; ground;}
+}

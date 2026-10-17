@@ -1,0 +1,13 @@
+{
+    "configuration": "List_db6tsleZByNSQv=ServoActuation;TopTaper=true",
+    "documentId": "eecabbca2b473235ed55f5da",
+    "documentMicroversion": "7a7e1d42d408677173274659",
+    "elementId": "ec87053891b043af359fb804",
+    "fullConfiguration": "List_db6tsleZByNSQv=ServoActuation;TopTaper=true",
+    "id": "MEpocNINgFTHGJ+Cu",
+    "isStandardContent": false,
+    "name": "ChopstickBase-SA <1>",
+    "partId": "RoBD",
+    "suppressed": false,
+    "type": "Part"
+}

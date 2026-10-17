@@ -1,0 +1,54 @@
+schema: tool_v1
+name: chopstick
+description: >-
+  Data-collection chopstick design.
+design:
+  estimator: chopsticks
+  marker:
+    dictionary: DICT_4X4_50
+  capture:
+    description: chopstick_dc
+  replay:
+    gripper: chopstick_sa
+    description: fr3_chopstick_sa
+
+session:
+  polarity: red
+  min_area: 145
+  max_area: 430
+  min_circularity: 0.7
+  fov_deg: 160
+  extent_x: 7.0
+  extent_y: 7.0
+  roi_radius_mm: 108.0
+  roi_inner_radius_mm: 38.0
+  roi_center_x_mm: 0.0
+  roi_center_y_mm: -5.0
+  roi_semicircle_keep: "+y"
+  clip_to_image: true
+  max_asymmetry_deg: 2.5
+  # Fallback steps, in the order they apply: fit (with outlier trim) ->
+  # drop-dot retry -> one-jaw fallback -> long-gap rescue -> completion.
+  # Outlier trim: drop stray dots from each jaw's line before the fit.
+  enable_outlier_trim: true
+  outlier_trim_mm: 3.0
+  outlier_trim_mad_k: 3.0
+  # Drop-dot retry: when the gate fails, drop the ONE dot whose removal
+  # minimises asymmetry and accept only if the SAME gate now passes.
+  enable_drop_dot_retry: true
+  drop_dot_min_side_dots: 3
+  # One-jaw fallback (visible jaw x2) when the other jaw is occluded; the
+  # cap rejects the degenerate near-closed x-split it also fires on.
+  enable_one_jaw_fallback: true
+  one_jaw_max_open_deg: 180.0
+  # Long-gap rescue: recover gate-rejected runs LONGER than long_gap_min_s
+  # (a DURATION, sized against each clip's own fps; shorter runs are left
+  # to completion) from the jaw that drifted least from the nearest
+  # accepted frame.
+  enable_long_gap_rescue: true
+  long_gap_min_s: 0.167
+  long_gap_max_jaw_drift_deg: 3.0
+  # Normalization endpoints (closed -> 0, open -> 1 in tool_state)
+  angle_closed_deg: 17.0
+  angle_open_deg: 107.0
+

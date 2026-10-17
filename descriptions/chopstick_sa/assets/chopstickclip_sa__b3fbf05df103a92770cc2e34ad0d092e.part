@@ -1,0 +1,13 @@
+{
+    "configuration": "List_VOg9vJHri7Sxd9=_0;List_db6tsleZByNSQv=ServoActuation;TopTaper=true",
+    "documentId": "eecabbca2b473235ed55f5da",
+    "documentMicroversion": "170f10355c57eedf22f0040e",
+    "elementId": "ec87053891b043af359fb804",
+    "fullConfiguration": "List_VOg9vJHri7Sxd9=_0;List_db6tsleZByNSQv=ServoActuation;TopTaper=true",
+    "id": "MYGqEXVktm9p4dVFb",
+    "isStandardContent": false,
+    "name": "ChopstickClip-SA <1>",
+    "partId": "RoBH",
+    "suppressed": false,
+    "type": "Part"
+}

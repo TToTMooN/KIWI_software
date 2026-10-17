@@ -1,0 +1,6 @@
+[submodule "third_party/kalibr"]
+	path = third_party/kalibr
+	url = https://github.com/ethz-asl/kalibr.git
+[submodule "third_party/ORB_SLAM3"]
+	path = third_party/ORB_SLAM3
+	url = https://github.com/UZ-SLAMLab/ORB_SLAM3.git

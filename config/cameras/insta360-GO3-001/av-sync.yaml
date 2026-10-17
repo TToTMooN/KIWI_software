@@ -1,0 +1,69 @@
+# Audio-vs-video stamping delay, per recording mode.
+#
+#   t_audio = t_video + av_delay_s
+#
+# Only the DIFFERENCE between two clips' delays is observable, so the scale
+# needs a zero: the `reference:` camera/mode below is it, by definition.
+#
+# A mode absent from `modes:` is UNMEASURED and MUST fail rather than default
+# to zero. This constant depends on the exact recording mode, RESOLUTION
+# INCLUDED. Re-measure after ANY mode change.
+#
+# Keys are DISPLAY-normalized (rotation applied) - kiwi.sync's RecordingMode
+# normalizes portrait/landscape storage of the same physical mode to one key.
+# Every calibration clip below was stored portrait with a -90/270 display matrix
+# while production ego clips are stored landscape; see the note on 2560x1440@50.
+schema: av_sync_v1
+unit: insta360-GO3-001
+model: Insta360 GO 3
+reference: insta360-X5 @ 1920x1920@119.88 (lens0)
+method: 'rolling-QR video ground truth (`kiwi calib qr sync` -> delta_qr_ms) minus
+  the raw audio estimate (kiwi.sync.audio.estimate_raw_offset); converted by kiwi.sync.audio.av_delay_from_ground_truth,
+  which is the single place the sign lives, and published by `kiwi calib qr av-delay`.
+  Derived 2026-07-25 from rolling-QR sync captures.
+
+  '
+extraction: ffmpeg -map 0:a:0 -ac 1 -ar 48000 -f s16le -
+measured_at: '2026-09-25'
+modes:
+  2720x1536@29.97:
+    av_delay_s: 0.0625
+    runs:
+    - run2
+    - run4
+    derived_ms:
+    - 57.9
+    - 67.1
+  2560x1440@29.97:
+    av_delay_s: 0.0256
+    runs:
+    - run7
+    derived_ms:
+    - 25.6
+  2560x1440@50:
+    av_delay_s: -0.0047
+    runs:
+    - run6_50ms
+    derived_ms:
+    - -4.7
+    note: 'Measured on a clip stored 1440x2560 with a 270-degree display matrix;
+      production ego clips are stored 2560x1440 with no rotation. The lookup is
+      rotation-invariant, but whether the CONSTANT is invariant to that
+      encoder-geometry change has not been tested. Treat as provisional until one
+      QR run is filmed in the production mount/orientation.
+
+      '
+  2688x2688@29.97:
+    runs:
+    - x5-017
+    - x5-041
+    derived_ms:
+    - 19.3
+    - 9.1
+    av_delay_s: 0.0142
+    note: >
+      The ego deployment mode: raw FreeFrame, 2688x2688 cropped from a 3040x3040
+      sensor read, selected output 2560x1440, stabilisation and dewarp off.
+
+      PROVISIONAL. Both derivations come from one 35 s capture filmed with two X5
+      references.

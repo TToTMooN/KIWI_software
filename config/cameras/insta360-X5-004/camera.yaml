@@ -1,0 +1,19 @@
+# insta360-X5-004 - Insta360 X5 camera registry entry.
+#
+# Recordings are matched to this unit by `serial:`, NEVER by directory name
+# (the embedded serial is read from the clip's telemetry). Calibration
+# artifacts are dated, append-only files; each pointer key below names the
+# active one, resolved only through kiwi.core.camera.registry.CameraUnit.
+# Publication = add the dated file + move the pointer.
+#
+# Registry-only unit: its front-lens intrinsics are not validated and it has
+# no front KB4 fit and no IMU noise file, so it binds and syncs recordings but
+# is not used for scene mapping or state.
+serial: "IAHYA2511BS4S3"
+model: Insta360 X5
+nickname: insta360-X5-004
+intrinsics: intrinsics.npz
+extrinsic_imu: extrinsic-imu.yaml
+extrinsic_imu_back: extrinsic-imu-back.yaml
+intrinsics_kb4_back: intrinsics-kb4-back.json
+av_sync: av-sync.yaml

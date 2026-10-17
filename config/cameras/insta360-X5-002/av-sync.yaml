@@ -1,0 +1,23 @@
+# Audio-vs-video stamping delay, per recording mode (t_audio = t_video + av_delay_s).
+#
+# Only DIFFERENCES between two clips' delays are observable, so this camera at
+# 1920x1920@119.88 is the DEFINED ZERO of the scale - every measured GO 3
+# constant is expressed relative to it (see
+# config/cameras/insta360-GO3-001/av-sync.yaml).
+#
+# Only that one mode is listed. 1920x1920@29.97 was never measured
+# against a different camera model.
+# Note that an X5<->X5 pair in the SAME mode never reads this file at all: the
+# delay is common-mode and cancels exactly (kiwi.sync.audio
+# .resolve_av_correction rule 1).
+schema: av_sync_v1
+unit: insta360-X5-002
+model: Insta360 X5
+reference: insta360-X5 @ 1920x1920@119.88 (lens0)
+method: reference zero by definition (not measured against anything)
+extraction: "ffmpeg -map 0:a:0 -ac 1 -ar 48000 -f s16le -"
+measured_at: 2026-07-25
+modes:
+  1920x1920@119.88:
+    av_delay_s: 0.0
+    note: reference zero by definition

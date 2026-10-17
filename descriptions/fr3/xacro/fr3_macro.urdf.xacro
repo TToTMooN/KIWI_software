@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fr3">
+
+  <xacro:include filename="$(find kiwi_descriptions)/upstream/franka_description/robots/common/franka_robot.xacro"/>
+
+  <!-- One FR3 arm from the vendored franka_description, kinematics only:
+       no hand, no ros2_control, no simulator plugins. The gripper is
+       attached by the composite that instantiates this macro. -->
+  <xacro:macro name="fr3"
+         params="arm_id
+             arm_prefix:=''
+             with_sc:=false
+             no_prefix:=false
+             connected_to:='base'
+             "
+    >
+  <xacro:property name="arm_prefix_modified" value="${'' if arm_prefix == '' else arm_prefix + '_'}" />
+  <!-- arm_id is forwarded as franka_robot's robot_type, and the yaml
+       parameter files load from the same variant directory. fr3 and fr3v2
+       params differ, so loading one variant's yaml with the other's
+       robot_type would silently mix mesh and kinematic data. -->
+  <xacro:property name="_franka_robot_dir" value="$(find kiwi_descriptions)/upstream/franka_description/robots/${arm_id}"/>
+  <xacro:franka_robot robot_type="${arm_id}"
+                      joint_limits="${xacro.load_yaml(_franka_robot_dir + '/joint_limits.yaml')}"
+                      inertials="${xacro.load_yaml(_franka_robot_dir + '/inertials.yaml')}"
+                      kinematics="${xacro.load_yaml(_franka_robot_dir + '/kinematics.yaml')}"
+                      dynamics="${xacro.load_yaml(_franka_robot_dir + '/dynamics.yaml')}"
+                      hand="false"
+                      with_sc="${with_sc}"
+                      no_prefix="${no_prefix}"
+                      arm_prefix="${arm_prefix_modified}"
+                      connected_to="${connected_to}">
+  </xacro:franka_robot>
+
+  </xacro:macro>
+
+</robot>

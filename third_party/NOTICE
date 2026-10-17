@@ -1,0 +1,121 @@
+Third-Party Notices
+===================
+
+Third-party software used by KIWI, in this directory and vendored elsewhere
+in the tree.
+
+NVIDIA 3DGRUT (external real2sim backend)
+---------------------------------------
+- Upstream: https://github.com/nv-tlabs/3dgrut
+- Pinned revision: a37ef721012dea0f29c0fcfff2d525023b4e854a
+- License: Apache-2.0 (see LICENSE and ATTRIBUTIONS.md in the installed
+  upstream checkout; ATTRIBUTIONS.md covers the backend's Python
+  dependencies but not the submodules below).
+- third_party/setup_real2sim.sh installs the backend in a separate GPU
+  environment under build/3dgrut by default. NVIDIA's Python/CUDA sources
+  and pretrained model weights are not vendored in KIWI.
+- Rendering runs in that backend environment. KIWI's rendering
+  worker imports the installed native renderer; the regular KIWI environment
+  does not require its CUDA dependencies.
+- Fetched by the installer into the gitignored build/3dgrut tree (build-time
+  only, none of it redistributed by KIWI):
+  - NVIDIA optix-dev headers, submodule threedgrt_tracer/dependencies/optix-dev
+    at tag v7.5.0 (4bcbb37d69476e3be620c1453b4ea729fb5e8f7a), under NVIDIA's
+    "Software Developer Kits, Samples and Tools License Agreement"
+    (LICENSE.txt in the submodule), accepted by downloading it;
+  - NVIDIA tiny-cuda-nn, submodule thirdparty/tiny-cuda-nn at
+    3c7931caab7b691c6f30dffe20952ed727d935b9 (v2.0), BSD-3-Clause, with the
+    nested submodules the same recursive update fetches: dependencies/cutlass
+    at 1eb6355182a5124639ce9d3ff165732a94ed9a70 (NVIDIA, BSD-3-Clause),
+    dependencies/fmt at b0c8263cb26ea178d3a5df1b984e1a61ef578950 (MIT; its
+    headers are compiled into the 3DGUT extension through
+    tiny-cuda-nn/common_host.h) and dependencies/cmrc at
+    952ffddba731fc110bd50409e8d2b8a06abbd237 (MIT), fetched but not compiled;
+  - the Slang compiler, binary release v2026.5.2
+    (slang-2026.5.2-linux-x86_64.tar.gz, sha256 d4f93f5e...), Apache-2.0 WITH
+    LLVM-exception, unpacked into build/3dgrut/.venv.
+
+Kalibr (third_party/kalibr)
+---------------------------
+- Upstream: https://github.com/ethz-asl/kalibr
+- Pinned revision: 1f60227442d25e36365ef5f72cd80b9666d73467
+- License: BSD (4-clause, with the advertising requirement; see
+  third_party/kalibr/LICENSE)
+- This product includes software developed by the Autonomous Systems Lab
+  and Skybotix AG.
+- Kalibr is never imported or linked into the `kiwi` package. It is the
+  build context for the `kalibr` Docker image (Dockerfile_ros1_20_04) and
+  runs as a separate containerized process, invoked by `kiwi calib` - the
+  container is where its ROS1 stack lives, keeping the host free of
+  ROS-shaped dependencies.
+
+Robot descriptions (descriptions/)
+----------------------------------
+- Upstream: https://github.com/frankarobotics/franka_description (formerly
+  github.com/frankaemika/franka_description)
+- License: Apache-2.0 (see descriptions/upstream/franka_description/LICENSE)
+- Copyright 2023 Franka Robotics GmbH (see
+  descriptions/upstream/franka_description/NOTICE)
+- The vendored Franka FR3 meshes and xacro sources live under
+  descriptions/upstream/franka_description/. The first-party gripper
+  descriptions, including the Chopstick CAD exports under
+  descriptions/chopstick_sa/ and descriptions/chopstick_dc/, and the FR3
+  composition code are KIWI's own work, licensed Apache-2.0 with the rest of
+  the repository. Frame conventions and provenance details are in
+  descriptions/PROVENANCE.md.
+
+MuJoCo Menagerie, franka_fr3 model (descriptions/fr3/)
+------------------------------------------------------
+- Upstream: https://github.com/google-deepmind/mujoco_menagerie
+- Pinned revision: 7876dcdef0d912387441616526ed236142f047d3
+- License: Apache-2.0 (franka_fr3/LICENSE upstream; the text is identical to
+  descriptions/upstream/franka_description/LICENSE)
+- The 28 .obj visual and 8 .stl collision meshes under descriptions/fr3/meshes/
+  are unmodified copies of franka_fr3/assets/. descriptions/fr3/mjcf/components/
+  fr3_common.xml and fr3_arm.xml are modified from franka_fr3/fr3.xml
+  (materials renamed, joint damping and frictionloss added, position
+  actuators replaced by motors, a flange body added).
+
+mjviser (kiwi/replay/mjviser, vendored into the kiwi package)
+-------------------------------------------------------------
+- Upstream: https://github.com/mujocolab/mjviser
+- Vendored from: 64da06c (v0.0.13, 2026-04-27); how that base was established
+  is in kiwi/replay/mjviser/PROVENANCE.md
+- License: Apache-2.0, Copyright 2025 The mjlab Developers (see
+  kiwi/replay/mjviser/LICENSE)
+- A trimmed fork of upstream's conversions.py and scene.py ships inside the
+  kiwi wheel (replay extra); the standalone viewer and CLI are not carried.
+  Vendoring notes: kiwi/replay/mjviser/PROVENANCE.md.
+
+ORB-SLAM3 (third_party/ORB_SLAM3)
+---------------------------------
+- Upstream: https://github.com/UZ-SLAMLab/ORB_SLAM3
+- Pinned revision: 4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4 (upstream V1.0)
+- License: GNU General Public License v3.0 (see
+  third_party/ORB_SLAM3/LICENSE)
+- ORB-SLAM3 is never imported or linked into the `kiwi` package. The session
+  wrapper runs as a separate process over an argv/file contract.
+- The submodule is the pristine upstream tree. Every local change is an
+  auditable diff under third_party/patches/orbslam3/ (keypoint exclude-mask
+  plumbing, localization-mode behavior), applied at build time onto a staged
+  copy under build/orbslam3/; the patch base commit is recorded in
+  third_party/patches/orbslam3/BASE_COMMIT.txt and equals the pinned
+  submodule revision. The build never modifies the submodule.
+- The resulting binaries are combined GPL-3.0 works; source for the exact
+  linked tree is the pinned submodule plus the patch series above.
+
+The first-party wrapper at cpp/orbslam_session/main.cc links against the
+ORB-SLAM3 libraries; the built kiwi-orbslam-session binary is therefore a
+combined work distributed under GPL-3.0 (a copy of the license sits beside
+the wrapper at cpp/orbslam_session/LICENSE). It is the only engine process
+the pipeline invokes, over an explicit named-argument contract.
+
+Pangolin (build-time only, not vendored)
+----------------------------------------
+- Upstream: https://github.com/stevenlovegrove/Pangolin
+- Pinned revision: dd801d244db3a8e27b7fe8020cd751404aa818fd (v0.6)
+- License: MIT (see LICENCE in the cloned tree)
+- A link-time dependency of ORB-SLAM3 only. third_party/build_orbslam3.sh
+  clones it on demand into the gitignored build/ tree; it is not a
+  submodule and is not distributed with KIWI. KIWI's session wrapper
+  constructs the SLAM system with the viewer disabled.

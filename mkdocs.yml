@@ -1,0 +1,57 @@
+site_name: KIWI
+site_description: >-
+  Kinematic Interface for the Wild - bimanual + egocentric robot data
+  collection with off-the-shelf cameras: no computer, no VR, voice-operated,
+  processed entirely offline.
+repo_url: https://github.com/TToTMooN/KIWI_software
+repo_name: TToTMooN/KIWI_software
+
+theme:
+  name: material
+  logo: assets/kiwi-logo.png
+  favicon: assets/kiwi-logo.png
+  font:
+    # Matches the wordmark in kiwi-logo-lockup.svg.
+    text: Inter
+  palette:
+    # Custom schemes, defined in docs/stylesheets/extra.css.
+    - media: "(prefers-color-scheme: light)"
+      scheme: kiwi
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: kiwi-dark
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Hardware and cameras: hardware.md
+  - Collect and process: processing.md
+  - Estimation: estimation.md
+  - Data and export: data.md
+  - Replay and Gaussian scenes: replay.md
